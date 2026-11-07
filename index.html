@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRANG CÁ NHÂN CỦA HƯNG ✨ | Nguyễn Hoàng Phú Hưng</title>
+  <link rel="icon" href="avatar.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Orbitron:wght@500;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #ff9d00;
+      --primary-rgb: 255, 157, 0;
+      --secondary: #ff2a5f;
+      --accent: #00f0ff;
+      --accent-rgb: 0, 240, 255;
+      --card-bg: rgba(10, 11, 18, 0.62);
+      --card-border: rgba(255, 255, 255, 0.16);
+      --text-main: #ffffff;
+      --glass-blur: 22px;
+    }
+
+    /* Theme Presets */
+    body[data-theme="ice"] {
+      --primary: #00f0ff;
+      --primary-rgb: 0, 240, 255;
+      --secondary: #3b82f6;
+      --accent: #a855f7;
+      --accent-rgb: 168, 85, 247;
+    }
+
+    body[data-theme="cyber"] {
+      --primary: #a855f7;
+      --primary-rgb: 168, 85, 247;
+      --secondary: #ec4899;
+      --accent: #00f0ff;
+      --accent-rgb: 0, 240, 255;
+    }
+
+    body[data-theme="emerald"] {
+      --primary: #10b981;
+      --primary-rgb: 16, 185, 129;
+      --secondary: #06b6d4;
+      --accent: #facc15;
+      --accent-rgb: 250, 204, 21;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      background: transparent;
+      color: var(--text-main);
+      font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 48px 16px 28px;
+    }
+
+    /* Video Background & Cinematic Vignette */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -4;
+      pointer-events: none;
+      filter: saturate(1.18) contrast(1.06);
+      transition: filter 0.5s ease;
+    }
+
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.32) 100%);
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    body.clear-mode .bg-overlay {
+      opacity: 0.2;
+    }
+
+    /* Canvases for Ambient Particles & Cursor Trail */
+    #particleCanvas, #fxCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    #particleCanvas { z-index: -2; }
+    #fxCanvas { z-index: 999; }
+
+    /* Top Left HUD: FPS + Ping + Live Status */
+    .hud-top-left {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fps-badge {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(8, 10, 16, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(57, 255, 20, 0.4);
+      padding: 7px 14px;
+      border-radius: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #39ff14;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 15px rgba(57, 255, 20, 0.18);
+      letter-spacing: 0.8px;
+    }
+
+    .fps-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #39ff14;
+      box-shadow: 0 0 10px #39ff14;
+      animation: pulseDot 1.2s infinite ease-in-out;
+    }
+
+    .ping-tag {
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.7);
+      border-left: 1px solid rgba(255, 255, 255, 0.18);
+      padding-left: 8px;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.7); opacity: 0.4; }
+    }
+
+    /* Top Right Quick Action Controls */
+    .hud-top-right {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .hud-btn {
+      background: rgba(10, 12, 20, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #fff;
+      height: 36px;
+      padding: 0 13px;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    .hud-btn:hover {
+      background: rgba(var(--primary-rgb), 0.24);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.35);
+    }
+
+    .hud-btn i {
+      color: var(--primary);
+      font-size: 13px;
+      transition: transform 0.3s ease;
+    }
+
+    .hud-btn:hover i {
+      transform: rotate(15deg) scale(1.15);
+    }
+
+    /* Main Profile Card with Animated RGB/Gold Border Beam */
+    .profile-card-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 590px;
+      border-radius: 32px;
+      padding: 2px;
+      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.65), rgba(255, 255, 255, 0.1), rgba(var(--accent-rgb), 0.65));
+      box-shadow:
+        0 30px 70px rgba(0, 0, 0, 0.75),
+        0 0 50px rgba(var(--primary-rgb), 0.18);
+      transition: transform 0.18s ease-out, box-shadow 0.4s ease;
+      transform-style: preserve-3d;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    /* Spinning Conic Neon Beam inside Wrapper */
+    .profile-card-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -60%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        var(--primary) 70deg,
+        var(--secondary) 140deg,
+        transparent 180deg,
+        var(--accent) 260deg,
+        var(--primary) 330deg,
+        transparent 360deg
+      );
+      animation: spinBorderBeam 5s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes spinBorderBeam {
+      to { transform: rotate(360deg); }
+    }
+
+    .profile-card {
+      position: relative;
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+      border-radius: 30px;
+      padding: 36px 30px 28px;
+      text-align: center;
+      z-index: 1;
+      overflow: hidden;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+
+    /* Ambient Corner Glow Orbs */
+    .corner-orb {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      filter: blur(65px);
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .corner-orb.top-left {
+      top: -80px;
+      left: -80px;
+      background: var(--primary);
+    }
+    .corner-orb.bottom-right {
+      bottom: -80px;
+      right: -80px;
+      background: var(--accent);
+    }
+
+    /* Clear Mode (Minimal Transparent) */
+    body.clear-mode .profile-card {
+      background: rgba(8, 8, 14, 0.22);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Mythic Avatar Showcase with Sacred Magic Rings */
+    .avatar-showcase {
+      position: relative;
+      width: 196px;
+      height: 196px;
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Magic Cyber Ring SVG */
+    .magic-ring-svg {
+      position: absolute;
+      inset: -16px;
+      width: calc(100% + 32px);
+      height: calc(100% + 32px);
+      pointer-events: none;
+      z-index: 0;
+      animation: rotateMagic 18s linear infinite;
+      opacity: 0.85;
+      filter: drop-shadow(0 0 10px var(--primary));
+    }
+
+    @keyframes rotateMagic {
+      to { transform: rotate(360deg); }
+    }
+
+    .avatar-aura {
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+      filter: blur(20px);
+      opacity: 0.65;
+      animation: rotateAura 5s linear infinite;
+      z-index: 0;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .avatar-showcase.music-playing .avatar-aura {
+      opacity: 0.92;
+      filter: blur(24px);
+      animation-duration: 2.5s;
+    }
+
+    @keyframes rotateAura {
+      0% { transform: rotate(0deg) scale(0.95); }
+      50% { transform: rotate(180deg) scale(1.06); }
+      100% { transform: rotate(360deg) scale(0.95); }
+    }
+
+    .avatar {
+      width: 152px;
+      height: 152px;
+      border-radius: 50%;
+      object-fit: cover;
+      position: relative;
+      z-index: 1;
+      border: 2.5px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .avatar-showcase:hover .avatar {
+      transform: scale(1.05);
+    }
+
+    .avatar-border {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 198px;
+      height: 198px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 2;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.65));
+      animation: floatFrame 3.8s ease-in-out infinite;
+    }
+
+    @keyframes floatFrame {
+      0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+      50% { transform: translate(-50%, -50%) translateY(-5px); }
+    }
+
+    /* Top Badges Row */
+    .badges-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+
+    .status-pill span.dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulseDot 1.4s infinite;
+    }
+
+    .vip-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.22), rgba(255, 87, 34, 0.22));
+      border: 1px solid rgba(255, 193, 7, 0.5);
+      color: #fde047;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 11px;
+      border-radius: 999px;
+      letter-spacing: 0.4px;
+      box-shadow: 0 0 15px rgba(255, 193, 7, 0.2);
+    }
+
+    /* Name & Verified Checkmark */
+    .name-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    h1.profile-name {
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: -0.3px;
+      background: linear-gradient(90deg, #ffffff 0%, #ffe8b3 35%, var(--primary) 70%, #ffffff 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shineName 4.5s linear infinite;
+      filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.5));
+    }
+
+    @keyframes shineName {
+      to { background-position: 200% center; }
+    }
+
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+      filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.9));
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .verified-badge:hover {
+      transform: scale(1.22) rotate(12deg);
+    }
+
+    /* Typewriter Subtitle */
+    .subtitle-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 22px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255, 232, 185, 0.92);
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 14px;
+      background: var(--primary);
+      margin-left: 4px;
+      animation: blinkCursor 0.75s infinite;
+    }
+
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Services List / Interactive Cards */
+    .services-container {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    .service-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      cursor: pointer;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-item::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.55s ease;
+    }
+
+    .service-item:hover::before {
+      left: 140%;
+    }
+
+    .service-item:hover {
+      background: rgba(var(--primary-rgb), 0.16);
+      border-color: rgba(var(--primary-rgb), 0.55);
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.18);
+    }
+
+    .service-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.28), rgba(255, 42, 95, 0.25));
+      border: 1px solid rgba(var(--primary-rgb), 0.45);
+      color: var(--primary);
+      box-shadow: 0 0 14px rgba(var(--primary-rgb), 0.25);
+      transition: transform 0.25s ease;
+    }
+
+    .service-item:hover .service-icon {
+      transform: scale(1.1) rotate(-6deg);
+    }
+
+    .service-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .service-text {
+      font-size: 12.6px;
+      font-weight: 700;
+      line-height: 1.45;
+      color: #f8fafc;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+    }
+
+    .service-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: rgba(var(--primary-rgb), 0.2);
+      border: 1px solid rgba(var(--primary-rgb), 0.4);
+      color: #ffe082;
+      flex-shrink: 0;
+      transition: all 0.25s ease;
+    }
+
+    .service-item:hover .service-tag {
+      background: var(--primary);
+      color: #000;
+    }
+
+    .service-item.guarantee {
+      background: linear-gradient(90deg, rgba(255, 157, 0, 0.18), rgba(239, 68, 68, 0.2), rgba(255, 157, 0, 0.18));
+      border-color: rgba(255, 170, 0, 0.48);
+    }
+
+    .service-item.guarantee .service-text {
+      font-weight: 800;
+      color: #ffd166;
+      letter-spacing: 0.5px;
+    }
+
+    /* Floating Glass Social Dock */
+    .social-dock-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 18px 0 20px;
+    }
+
+    .social-icons {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      padding: 10px 16px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      flex-wrap: wrap;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12), 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .social-btn {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .social-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: rgba(10, 12, 20, 0.95);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 7px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      border: 1px solid var(--primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
+      z-index: 20;
+    }
+
+    .social-btn:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .social-btn:hover {
+      transform: translateY(-7px) scale(1.12);
+    }
+
+    .social-btn.fb:hover {
+      background: linear-gradient(135deg, #1877F2, #0b5ed7);
+      border-color: #60a5fa;
+      box-shadow: 0 10px 24px rgba(24, 119, 242, 0.6);
+    }
+
+    .social-btn.ig:hover {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      border-color: #f472b6;
+      box-shadow: 0 10px 24px rgba(225, 48, 108, 0.6);
+    }
+
+    .social-btn.tt:hover {
+      background: linear-gradient(135deg, #000000, #25F4EE, #FE2C55);
+      border-color: #25F4EE;
+      box-shadow: 0 10px 24px rgba(254, 44, 85, 0.55);
+    }
+
+    .social-btn.tg:hover {
+      background: linear-gradient(135deg, #2AABEE, #229ED9);
+      border-color: #7dd3fc;
+      box-shadow: 0 10px 24px rgba(42, 171, 238, 0.6);
+    }
+
+    .social-btn.locket:hover {
+      background: linear-gradient(135deg, #FFC107, #FF8F00);
+      border-color: #fde047;
+      box-shadow: 0 10px 24px rgba(255, 193, 7, 0.65);
+    }
+
+    .social-btn.sc:hover {
+      background: linear-gradient(135deg, #ff7700, #ff3300);
+      border-color: #fdba74;
+      box-shadow: 0 10px 24px rgba(255, 85, 0, 0.65);
+    }
+
+    .social-btn.copy-btn:hover {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      border-color: #c4b5fd;
+      box-shadow: 0 10px 24px rgba(139, 92, 246, 0.6);
+    }
+
+    /* Date Created / Live Uptime HUD */
+    .uptime-box {
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 18px;
+      padding: 13px 16px;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .uptime-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: rgba(255, 255, 255, 0.72);
+      margin-bottom: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .uptime-label i {
+      color: var(--primary);
+    }
+
+    .uptime-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .uptime-unit {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(var(--primary-rgb), 0.3);
+      border-radius: 12px;
+      padding: 7px 4px;
+      box-shadow: inset 0 0 12px rgba(var(--primary-rgb), 0.08);
+    }
+
+    .uptime-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary);
+      text-shadow: 0 0 12px rgba(var(--primary-rgb), 0.55);
+    }
+
+    .uptime-txt {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.68);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .classic-timer-line {
+      font-size: 12px;
+      color: #ff7b7b;
+      font-weight: 700;
+      margin-top: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Upgraded Studio Music Player + Audio Visualizer */
+    .music-player {
+      background: rgba(12, 14, 24, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px;
+      padding: 15px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 25px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .now-playing {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+      flex: 1;
+      text-align: left;
+    }
+
+    .vinyl-disc {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--primary) 20%, #1e1e2a 23%, #0e0e14 64%, #333 100%);
+      border: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.45);
+      animation: spinDisc 3.6s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .vinyl-disc.playing {
+      animation-play-state: running;
+    }
+
+    .vinyl-disc::after {
+      content: "";
+      width: 9px;
+      height: 9px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    @keyframes spinDisc {
+      to { transform: rotate(360deg); }
+    }
+
+    .song-meta {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .song-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .song-status {
+      font-size: 11px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    /* Live Spectrum Visualizer Canvas */
+    #visualizerCanvas {
+      width: 72px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 2px;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ctrl-btn {
+      width: 33px;
+      height: 33px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .ctrl-btn:hover {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+      transform: scale(1.08);
+    }
+
+    .ctrl-btn.play-toggle {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.5);
+    }
+
+    /* Progress & Volume Row */
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 10.5px;
+      font-family: 'Orbitron', monospace;
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .progress-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+      border-radius: 999px;
+      transition: width 0.1s linear;
+    }
+
+    .volume-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: 4px;
+    }
+
+    .vol-icon {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 12px;
+      cursor: pointer;
+      width: 16px;
+      text-align: center;
+    }
+
+    .vol-slider {
+      width: 54px;
+      height: 4px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* Styled Song Select Dropdown */
+    .playlist-select-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .playlist-select {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #fff;
+      padding: 10px 36px 10px 14px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .playlist-select:hover, .playlist-select:focus {
+      border-color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.14);
+    }
+
+    .playlist-select option {
+      background: #121420;
+      color: #fff;
+      padding: 8px;
+    }
+
+    .select-chevron {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--primary);
+      font-size: 12px;
+    }
+
+    /* Quick Service Contact Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 5, 12, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(16, 18, 30, 0.95);
+      border: 1px solid var(--primary);
+      border-radius: 24px;
+      padding: 24px 22px;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(var(--primary-rgb), 0.25);
+      transform: scale(0.92) translateY(12px);
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-backdrop.open .modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .modal-desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 11px 16px;
+      border-radius: 13px;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #fff;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .modal-link:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .modal-link.fb-cta {
+      background: linear-gradient(135deg, #1877F2, #0b5ed7);
+    }
+
+    .modal-link.tg-cta {
+      background: linear-gradient(135deg, #2AABEE, #229ED9);
+    }
+
+    .modal-close {
+      margin-top: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 8px 18px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background: rgba(12, 14, 24, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--primary);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(var(--primary-rgb), 0.3);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 3500;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 560px) {
+      body {
+        padding-top: 64px;
+      }
+      .profile-card {
+        padding: 26px 16px 22px;
+      }
+      .avatar-showcase {
+        width: 164px;
+        height: 164px;
+      }
+      .avatar {
+        width: 130px;
+        height: 130px;
+      }
+      .avatar-border {
+        width: 170px;
+        height: 170px;
+      }
+      h1.profile-name {
+        font-size: 22px;
+      }
+      .service-text {
+        font-size: 11.6px;
+      }
+      .hud-btn span {
+        display: none;
+      }
+      .ping-tag {
+        display: none;
+      }
+      .vol-slider {
+        width: 42px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="fire">
+
+  <!-- Video Background (Local with remote fallback) -->
+  <video autoplay muted loop playsinline id="bgVideo">
+    <source src="backlu.mp4" type="video/mp4">
+    <source src="https://nhphuhung.my.id/backlu.mp4" type="video/mp4">
+  </video>
+  <div class="bg-overlay"></div>
+
+  <!-- Background Particles Canvas -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Top-Left FPS & Ping HUD -->
+  <div class="hud-top-left">
+    <div class="fps-badge">
+      <span class="fps-dot"></span>
+      <span id="fps">FPS: 60</span>
+      <span class="ping-tag" id="pingText">12ms</span>
+    </div>
+  </div>
+
+  <!-- Top-Right Quick Customization Buttons -->
+  <div class="hud-top-right">
+    <button class="hud-btn" id="themeBtn" title="Đổi chủ đề màu sắc (Lửa / Băng / Tím Cyber / Ngọc Lục Bảo)">
+      <i class="fa-solid fa-palette"></i>
+      <span id="themeText">Giao diện: Hỏa Long</span>
+    </button>
+    <button class="hud-btn" id="particleModeBtn" title="Đổi hiệu ứng hạt (Lửa / Tuyết / Sao Băng)">
+      <i class="fa-solid fa-fire-flame-curved"></i>
+      <span id="particleModeText">Hạt: Lửa</span>
+    </button>
+    <button class="hud-btn" id="glassModeBtn" title="Chuyển đổi khung kính trong suốt">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+      <span id="glassModeText">Khung Kính</span>
+    </button>
+  </div>
+
+  <!-- Main 3D Glassmorphic Profile Card with Spinning Neon Border -->
+  <div class="profile-card-wrap" id="cardWrap">
+    <main class="profile-card" id="profileCard">
+      <div class="corner-orb top-left"></div>
+      <div class="corner-orb bottom-right"></div>
+
+      <div class="card-content">
+
+        <!-- Avatar + Sacred Magic Ring + Ornate Mythic Frame -->
+        <div class="avatar-showcase" id="avatarShowcase">
+          <svg class="magic-ring-svg" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="6 6" style="color: var(--primary); opacity: 0.65;" />
+            <circle cx="100" cy="100" r="85" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="28 14 6 14" style="color: var(--accent); opacity: 0.55;" />
+          </svg>
+          <div class="avatar-aura"></div>
+          <img src="avatar.png" onerror="this.onerror=null;this.src='avatar.jpg';" alt="Nguyễn Hoàng Phú Hưng" class="avatar">
+          <img src="frame.png" onerror="this.onerror=null;this.src='https://nhphuhung.my.id/frame.png';" alt="Frame" class="avatar-border">
+        </div>
+
+        <!-- Status & VIP Pill Row -->
+        <div class="badges-row">
+          <div class="status-pill">
+            <span class="dot"></span>
+            <span>Trực tuyến 24/7</span>
+          </div>
+          <div class="vip-pill">
+            <i class="fa-solid fa-crown"></i>
+            <span>VIP PROFILE</span>
+          </div>
+        </div>
+
+        <!-- Full Name & Verified Checkmark -->
+        <div class="name-row">
+          <h1 class="profile-name">Nguyễn Hoàng Phú Hưng</h1>
+          <span class="verified-badge" title="Đã xác minh chính chủ">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none">
+              <circle cx="12" cy="12" r="10.5" fill="url(#verifiedGrad)"/>
+              <path d="M8.2 12.3L10.7 14.8L16 9.5" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="verifiedGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#6366f1"/>
+                  <stop offset="50%" stop-color="#8b5cf6"/>
+                  <stop offset="100%" stop-color="#00f0ff"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </span>
+        </div>
+
+        <!-- Dynamic Typewriter Subtitle -->
+        <div class="subtitle-wrap">
+          <span id="typewriterText">⚡ Chuyên Dịch Vụ Mạng Xã Hội & Tài Khoản Premium</span>
+          <span class="typewriter-cursor"></span>
+        </div>
+
+        <!-- Interactive Services Showcase (Click to open Quick Contact Modal) -->
+        <div class="services-container">
+          <div class="service-item" data-service="Nhận Code Trang Cá Nhân">
+            <div class="service-icon"><i class="fa-solid fa-laptop-code"></i></div>
+            <div class="service-body">
+              <div class="service-text">NHẬN CODE TRANG CÁ NHÂN</div>
+            </div>
+            <span class="service-tag"><i class="fa-solid fa-bolt"></i> VIP</span>
+          </div>
+
+          <div class="service-item" data-service="Buff View, Tim TikTok, Follow FB, TikTok, IG">
+            <div class="service-icon"><i class="fa-solid fa-rocket"></i></div>
+            <div class="service-body">
+              <div class="service-text">BUFF VIEW, TIM TIKTOK, FOLLOW FB, TIKTOK, IG</div>
+            </div>
+            <span class="service-tag">HOT</span>
+          </div>
+
+          <div class="service-item" data-service="Up Locket Gold, Shadowrocket, Spotify Premium, SoundCloud Go+ (iOS)">
+            <div class="service-icon"><i class="fa-brands fa-apple"></i></div>
+            <div class="service-body">
+              <div class="service-text">NHẬN UP LOCKET GOLD, TẢI SHADOWROCKET, UP SPOTIFY PREMIUM, SOUNDCLOUD GO+ DÀNH CHO IOS</div>
+            </div>
+            <span class="service-tag">iOS</span>
+          </div>
+
+          <div class="service-item" data-service="Nâng cấp Gemini Pro & YouTube Premium (Android & iOS)">
+            <div class="service-icon"><i class="fa-solid fa-gem"></i></div>
+            <div class="service-body">
+              <div class="service-text">NHẬN UP GEMINI PRO, YOUTUBE PREMIUM CHO ANDROID VÀ IOS</div>
+            </div>
+            <span class="service-tag">PRO</span>
+          </div>
+
+          <div class="service-item guarantee" data-service="Chế độ Bảo Hành Đến Khi Sập Google">
+            <div class="service-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="service-body">
+              <div class="service-text">🔥 BẢO HÀNH ĐẾN KHI SẬP GOOGLE 🔥</div>
+            </div>
+            <span class="service-tag">100% UY TÍN</span>
+          </div>
+        </div>
+
+        <!-- Floating Social Dock -->
+        <div class="social-dock-wrap">
+          <div class="social-icons">
+            <a href="https://www.facebook.com/nguyen.hoang.phu.hung.194453/" target="_blank" rel="noopener" class="social-btn fb" data-tooltip="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+
+            <a href="https://www.instagram.com/hungnhp09/" target="_blank" rel="noopener" class="social-btn ig" data-tooltip="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+
+            <a href="https://www.tiktok.com/@hungnhp10936?_r=1&_t=ZS-94wh217daA1" target="_blank" rel="noopener" class="social-btn tt" data-tooltip="TikTok">
+              <i class="fab fa-tiktok"></i>
+            </a>
+
+            <a href="https://t.me/hungnhp09" target="_blank" rel="noopener" class="social-btn tg" data-tooltip="Telegram">
+              <i class="fab fa-telegram-plane"></i>
+            </a>
+
+            <a href="https://locket.camera/links/mbzvtfwyCqMEkFp87" target="_blank" rel="noopener" class="social-btn locket" data-tooltip="Locket">
+              <svg viewBox="0 0 100 100" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" rx="24" fill="#FFC107"/>
+                <path d="M50 72.5L30.5 52.5C24.5 46.5 24.5 36.5 30.5 30.5C36.5 24.5 46.5 24.5 50 31.5C53.5 24.5 63.5 24.5 69.5 30.5C75.5 36.5 75.5 46.5 69.5 52.5L50 72.5Z" fill="white"/>
+              </svg>
+            </a>
+
+            <a href="https://soundcloud.com/h-ng-376197997" target="_blank" rel="noopener" class="social-btn sc" data-tooltip="SoundCloud">
+              <i class="fab fa-soundcloud"></i>
+            </a>
+
+            <button type="button" class="social-btn copy-btn" id="copyBioBtn" data-tooltip="Sao chép Link Web">
+              <i class="fa-solid fa-share-nodes"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Date Created / Live Counter -->
+        <div class="uptime-box">
+          <div class="uptime-label">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Thời gian hoạt động (Since 22/04/2025)</span>
+          </div>
+          <div class="uptime-grid">
+            <div class="uptime-unit">
+              <div class="uptime-num" id="dVal">0</div>
+              <div class="uptime-txt">Ngày</div>
+            </div>
+            <div class="uptime-unit">
+              <div class="uptime-num" id="hVal">0</div>
+              <div class="uptime-txt">Giờ</div>
+            </div>
+            <div class="uptime-unit">
+              <div class="uptime-num" id="mVal">0</div>
+              <div class="uptime-txt">Phút</div>
+            </div>
+            <div class="uptime-unit">
+              <div class="uptime-num" id="sVal">0</div>
+              <div class="uptime-txt">Giây</div>
+            </div>
+          </div>
+          <div class="classic-timer-line">
+            Date created: <span id="timer">...</span>
+          </div>
+        </div>
+
+        <!-- Studio Music Player with Spectrum Visualizer -->
+        <div class="music-player">
+          <div class="player-top">
+            <div class="now-playing">
+              <div class="vinyl-disc" id="vinylDisc"></div>
+              <div class="song-meta">
+                <div class="song-title" id="currentSongTitle">Chọn bài hát để phát nhạc...</div>
+                <div class="song-status">
+                  <span id="playStateText">🎧 Chạm Play hoặc chọn bài bên dưới</span>
+                </div>
+              </div>
+            </div>
+
+            <canvas id="visualizerCanvas" width="72" height="22"></canvas>
+
+            <div class="player-controls">
+              <button class="ctrl-btn" id="prevSongBtn" title="Bài trước">
+                <i class="fa-solid fa-backward-step"></i>
+              </button>
+              <button class="ctrl-btn play-toggle" id="playPauseBtn" title="Phát / Tạm dừng">
+                <i class="fa-solid fa-play" id="playPauseIcon"></i>
+              </button>
+              <button class="ctrl-btn" id="nextSongBtn" title="Bài tiếp">
+                <i class="fa-solid fa-forward-step"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="progress-row">
+            <span id="curTime">0:00</span>
+            <div class="progress-bar-wrap" id="progressBarWrap">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span id="durTime">0:00</span>
+            <div class="volume-wrap" title="Âm lượng">
+              <i class="fa-solid fa-volume-high vol-icon" id="volIcon"></i>
+              <input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="0.85">
+            </div>
+          </div>
+
+          <div class="playlist-select-wrap">
+            <select class="playlist-select" id="songSelect">
+              <option value="">🎵 Play Music — Chọn bài hát yêu thích</option>
+              <option value="deanhluongthien.mp3">1. Để Anh Lương Thiện</option>
+              <option value="emcuoiroia.mp3">2. Em Cưới Rồi À</option>
+              <option value="64uhq425xy.mp3">3. Tháp Yêu</option>
+              <option value="bautroi.mp3">4. Bầu Trời Hoa Vương</option>
+              <option value="emgieo.mp3">5. Từ Em Mà Ra</option>
+              <option value="duyen.mp3">6. Duyên Trời Lấy 2</option>
+              <option value="nang.mp3">7. Nắng Cũ</option>
+              <option value="3107x ghequa.mp3">8. 3107 x Ghé Qua</option>
+            </select>
+            <i class="fa-solid fa-chevron-down select-chevron"></i>
+          </div>
+
+          <audio id="bgMusic" loop preload="none"></audio>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Quick Service Contact Modal -->
+  <div class="modal-backdrop" id="serviceModal">
+    <div class="modal-card">
+      <div class="modal-title" id="modalServiceTitle">Liên Hệ Dịch Vụ</div>
+      <div class="modal-desc">
+        Bạn đang quan tâm đến dịch vụ của <strong>Nguyễn Hoàng Phú Hưng</strong>. Hãy chọn kênh liên hệ bên dưới để được hỗ trợ nhanh nhất 24/7!
+      </div>
+      <div class="modal-actions">
+        <a href="https://www.facebook.com/nguyen.hoang.phu.hung.194453/" target="_blank" rel="noopener" class="modal-link fb-cta">
+          <i class="fab fa-facebook-messenger"></i> Nhắn tin qua Facebook
+        </a>
+        <a href="https://t.me/hungnhp09" target="_blank" rel="noopener" class="modal-link tg-cta">
+          <i class="fab fa-telegram-plane"></i> Nhắn tin qua Telegram (@hungnhp09)
+        </a>
+      </div>
+      <button type="button" class="modal-close" id="closeModalBtn">Đóng cửa sổ</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toastMsg">
+    <i class="fa-solid fa-circle-check" style="color: #39ff14;"></i>
+    <span id="toastText">Đã sao chép liên kết trang cá nhân!</span>
+  </div>
+
+  <script>
+    // 1. Live Timer / Date Created Counter
+    const createdAt = new Date("2025-04-22T00:00:00");
+    const dVal = document.getElementById("dVal");
+    const hVal = document.getElementById("hVal");
+    const mVal = document.getElementById("mVal");
+    const sVal = document.getElementById("sVal");
+    const timerSpan = document.getElementById("timer");
+
+    function updateTimer() {
+      const now = new Date();
+      const diff = Math.max(0, Math.floor((now - createdAt) / 1000));
+      const days = Math.floor(diff / (3600 * 24));
+      const hours = Math.floor((diff % (3600 * 24)) / 3600);
+      const minutes = Math.floor((diff % 3600) / 60);
+      const seconds = diff % 60;
+
+      dVal.textContent = days;
+      hVal.textContent = String(hours).padStart(2, "0");
+      mVal.textContent = String(minutes).padStart(2, "0");
+      sVal.textContent = String(seconds).padStart(2, "0");
+      timerSpan.textContent = `${days} day ${hours} hour ${minutes} minute ${seconds} second`;
+    }
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    // 2. Real-time FPS Counter + Simulated Smooth Ping
+    let lastFrame = performance.now();
+    let frameCount = 0;
+    const fpsEl = document.getElementById("fps");
+    const pingEl = document.getElementById("pingText");
+
+    function updateFPS(now) {
+      frameCount++;
+      if (now - lastFrame >= 1000) {
+        fpsEl.textContent = `FPS: ${frameCount}`;
+        pingEl.textContent = `${10 + Math.floor(Math.random() * 6)}ms`;
+        frameCount = 0;
+        lastFrame = now;
+      }
+      requestAnimationFrame(updateFPS);
+    }
+    requestAnimationFrame(updateFPS);
+
+    // 3. Typewriter Subtitle Effect
+    const phrases = [
+      "⚡ Chuyên Dịch Vụ Mạng Xã Hội & Tài Khoản Premium",
+      "💻 Nhận Code Trang Cá Nhân Đẹp Chuẩn Xu Hướng",
+      "🚀 Buff View, Tim TikTok, Follow FB / IG / TikTok",
+      "🍎 Up Locket Gold • Shadowrocket • Spotify • SoundCloud Go+",
+      "💎 Nâng Cấp Gemini Pro & YouTube Premium Giá Tốt",
+      "🛡️ Bảo Hành Uy Tín Đến Khi Sập Google!"
+    ];
+    const typewriterEl = document.getElementById("typewriterText");
+    let phraseIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+
+    function runTypewriter() {
+      const currentPhrase = phrases[phraseIdx];
+      if (!isDeleting) {
+        charIdx++;
+        typewriterEl.textContent = currentPhrase.slice(0, charIdx);
+        if (charIdx === currentPhrase.length) {
+          isDeleting = true;
+          setTimeout(runTypewriter, 2200);
+          return;
+        }
+        setTimeout(runTypewriter, 45);
+      } else {
+        charIdx--;
+        typewriterEl.textContent = currentPhrase.slice(0, charIdx);
+        if (charIdx === 0) {
+          isDeleting = false;
+          phraseIdx = (phraseIdx + 1) % phrases.length;
+          setTimeout(runTypewriter, 300);
+          return;
+        }
+        setTimeout(runTypewriter, 22);
+      }
+    }
+    setTimeout(runTypewriter, 1500);
+
+    // 4. Studio Music Player + Animated Visualizer Bars
+    const REMOTE_BASE = "https://nhphuhung.my.id/";
+    const audio = document.getElementById("bgMusic");
+    const songSelect = document.getElementById("songSelect");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const playPauseIcon = document.getElementById("playPauseIcon");
+    const prevSongBtn = document.getElementById("prevSongBtn");
+    const nextSongBtn = document.getElementById("nextSongBtn");
+    const currentSongTitle = document.getElementById("currentSongTitle");
+    const playStateText = document.getElementById("playStateText");
+    const vinylDisc = document.getElementById("vinylDisc");
+    const avatarShowcase = document.getElementById("avatarShowcase");
+    const progressFill = document.getElementById("progressFill");
+    const progressBarWrap = document.getElementById("progressBarWrap");
+    const curTimeEl = document.getElementById("curTime");
+    const durTimeEl = document.getElementById("durTime");
+    const volSlider = document.getElementById("volSlider");
+    const volIcon = document.getElementById("volIcon");
+
+    audio.volume = parseFloat(volSlider.value);
+
+    const playlist = Array.from(songSelect.options)
+      .filter(opt => opt.value !== "")
+      .map(opt => ({
+        file: opt.value,
+        title: opt.textContent.replace(/^\d+\.\s*/, "")
+      }));
+
+    let currentTrackIndex = -1;
+    let triedRemoteFallback = false;
+    let isAudioPlaying = false;
+
+    function formatTime(sec) {
+      if (!sec || isNaN(sec)) return "0:00";
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s < 10 ? "0" : ""}${s}`;
+    }
+
+    function setPlayingUI(playing) {
+      isAudioPlaying = playing;
+      if (playing) {
+        playPauseIcon.className = "fa-solid fa-pause";
+        vinylDisc.classList.add("playing");
+        avatarShowcase.classList.add("music-playing");
+        playStateText.textContent = "🔥 Đang phát nhạc cực cháy";
+      } else {
+        playPauseIcon.className = "fa-solid fa-play";
+        vinylDisc.classList.remove("playing");
+        avatarShowcase.classList.remove("music-playing");
+        playStateText.textContent = audio.src ? "⏸ Đã tạm dừng" : "🎧 Chạm Play hoặc chọn bài bên dưới";
+      }
+    }
+
+    function loadAndPlayTrack(index) {
+      if (index < 0 || index >= playlist.length) return;
+      currentTrackIndex = index;
+      const track = playlist[index];
+      songSelect.value = track.file;
+      currentSongTitle.textContent = track.title;
+      triedRemoteFallback = false;
+
+      audio.src = "./" + track.file;
+      audio.play().then(() => {
+        setPlayingUI(true);
+      }).catch(() => {
+        if (!triedRemoteFallback) {
+          triedRemoteFallback = true;
+          audio.src = REMOTE_BASE + encodeURI(track.file);
+          audio.play().then(() => setPlayingUI(true)).catch(() => setPlayingUI(false));
+        }
+      });
+    }
+
+    audio.addEventListener("error", () => {
+      if (!triedRemoteFallback && currentTrackIndex >= 0) {
+        triedRemoteFallback = true;
+        const track = playlist[currentTrackIndex];
+        audio.src = REMOTE_BASE + encodeURI(track.file);
+        audio.play().then(() => setPlayingUI(true)).catch(() => setPlayingUI(false));
+      }
+    });
+
+    songSelect.addEventListener("change", (e) => {
+      const val = e.target.value;
+      if (!val) {
+        audio.pause();
+        setPlayingUI(false);
+        return;
+      }
+      const idx = playlist.findIndex(item => item.file === val);
+      if (idx !== -1) loadAndPlayTrack(idx);
+    });
+
+    playPauseBtn.addEventListener("click", () => {
+      if (currentTrackIndex === -1) {
+        loadAndPlayTrack(0);
+        return;
+      }
+      if (audio.paused) {
+        audio.play().then(() => setPlayingUI(true));
+      } else {
+        audio.pause();
+        setPlayingUI(false);
+      }
+    });
+
+    prevSongBtn.addEventListener("click", () => {
+      const nextIdx = currentTrackIndex <= 0 ? playlist.length - 1 : currentTrackIndex - 1;
+      loadAndPlayTrack(nextIdx);
+    });
+
+    nextSongBtn.addEventListener("click", () => {
+      const nextIdx = currentTrackIndex >= playlist.length - 1 ? 0 : currentTrackIndex + 1;
+      loadAndPlayTrack(nextIdx);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      if (audio.duration) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        progressFill.style.width = `${pct}%`;
+        curTimeEl.textContent = formatTime(audio.currentTime);
+        durTimeEl.textContent = formatTime(audio.duration);
+      }
+    });
+
+    progressBarWrap.addEventListener("click", (e) => {
+      if (!audio.duration) return;
+      const rect = progressBarWrap.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      audio.currentTime = ratio * audio.duration;
+    });
+
+    volSlider.addEventListener("input", (e) => {
+      const v = parseFloat(e.target.value);
+      audio.volume = v;
+      audio.muted = v === 0;
+      volIcon.className = v === 0
+        ? "fa-solid fa-volume-xmark vol-icon"
+        : v < 0.5
+          ? "fa-solid fa-volume-low vol-icon"
+          : "fa-solid fa-volume-high vol-icon";
+    });
+
+    volIcon.addEventListener("click", () => {
+      audio.muted = !audio.muted;
+      volIcon.className = audio.muted
+        ? "fa-solid fa-volume-xmark vol-icon"
+        : "fa-solid fa-volume-high vol-icon";
+    });
+
+    // Spectrum Visualizer Canvas Animation
+    const visCanvas = document.getElementById("visualizerCanvas");
+    const visCtx = visCanvas.getContext("2d");
+    const barCount = 12;
+    const barHeights = new Array(barCount).fill(3);
+
+    function drawVisualizer() {
+      visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
+      const barWidth = 4;
+      const gap = 2;
+      const primaryColor = getComputedStyle(document.body).getPropertyValue("--primary").trim() || "#ff9d00";
+
+      for (let i = 0; i < barCount; i++) {
+        if (isAudioPlaying) {
+          const target = 3 + Math.random() * 17;
+          barHeights[i] += (target - barHeights[i]) * 0.35;
+        } else {
+          barHeights[i] += (3 - barHeights[i]) * 0.2;
+        }
+        const h = Math.max(3, barHeights[i]);
+        const x = i * (barWidth + gap) + 2;
+        const y = visCanvas.height - h;
+
+        visCtx.fillStyle = primaryColor;
+        visCtx.beginPath();
+        visCtx.roundRect(x, y, barWidth, h, 2);
+        visCtx.fill();
+      }
+      requestAnimationFrame(drawVisualizer);
+    }
+    drawVisualizer();
+
+    // 6. Background Particle System (Fire Embers / Snow / Shooting Stars)
+    const canvas = document.getElementById("particleCanvas");
+    const ctx = canvas.getContext("2d");
+    const modes = ["embers", "snow", "stars"];
+    let modeIndex = 0;
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function createParticles() {
+      particles = [];
+      const count = 80;
+      for (let i = 0; i < count; i++) {
+        particles.push(makeParticle());
+      }
+    }
+
+    function makeParticle() {
+      const mode = modes[modeIndex];
+      if (mode === "embers") {
+        const colors = ["#ff9d00", "#ff5500", "#ffbe42", "#ff2a5f", "#ffffff"];
+        return {
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: 1.2 + Math.random() * 2.8,
+          vx: (Math.random() - 0.5) * 1.2,
+          vy: -(0.7 + Math.random() * 1.9),
+          alpha: 0.35 + Math.random() * 0.65,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        };
+      } else if (mode === "snow") {
+        return {
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: 1.5 + Math.random() * 2.6,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: 0.8 + Math.random() * 1.6,
+          alpha: 0.4 + Math.random() * 0.6,
+          color: "#ffffff"
+        };
+      } else {
+        const colors = ["#00f0ff", "#a855f7", "#fde047", "#ffffff"];
+        return {
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: 1.2 + Math.random() * 2.2,
+          vx: 1.4 + Math.random() * 2.2,
+          vy: 0.7 + Math.random() * 1.4,
+          alpha: 0.4 + Math.random() * 0.6,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        };
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const mode = modes[modeIndex];
+      for (let p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (mode === "embers" && p.y < -10) {
+          p.y = canvas.height + 10;
+          p.x = Math.random() * canvas.width;
+        } else if (mode !== "embers") {
+          if (p.y > canvas.height + 10) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+          if (p.x > canvas.width + 10) {
+            p.x = -10;
+          }
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+        ctx.restore();
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    createParticles();
+    animateParticles();
+
+    // 7. Theme Switcher & HUD Buttons
+    const themes = [
+      { id: "fire", name: "Giao diện: Hỏa Long" },
+      { id: "ice", name: "Giao diện: Băng Giá" },
+      { id: "cyber", name: "Giao diện: Tím Cyber" },
+      { id: "emerald", name: "Giao diện: Lục Bảo" }
+    ];
+    let themeIdx = 0;
+    const themeBtn = document.getElementById("themeBtn");
+    const themeText = document.getElementById("themeText");
+
+    themeBtn.addEventListener("click", () => {
+      themeIdx = (themeIdx + 1) % themes.length;
+      document.body.setAttribute("data-theme", themes[themeIdx].id);
+      themeText.textContent = themes[themeIdx].name;
+    });
+
+    const particleModeBtn = document.getElementById("particleModeBtn");
+    const particleModeText = document.getElementById("particleModeText");
+    const modeLabels = ["Hạt: Lửa", "Hạt: Tuyết", "Hạt: Sao Băng"];
+    const modeIcons = ["fa-solid fa-fire-flame-curved", "fa-regular fa-snowflake", "fa-solid fa-meteor"];
+
+    particleModeBtn.addEventListener("click", () => {
+      modeIndex = (modeIndex + 1) % modes.length;
+      particleModeText.textContent = modeLabels[modeIndex];
+      particleModeBtn.querySelector("i").className = modeIcons[modeIndex];
+      createParticles();
+    });
+
+    const glassModeBtn = document.getElementById("glassModeBtn");
+    const glassModeText = document.getElementById("glassModeText");
+    glassModeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("clear-mode");
+      const isClear = document.body.classList.contains("clear-mode");
+      glassModeText.textContent = isClear ? "Trong Suốt" : "Khung Kính";
+    });
+
+    // 9. Interactive Service Modal
+    const serviceModal = document.getElementById("serviceModal");
+    const modalServiceTitle = document.getElementById("modalServiceTitle");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+
+    document.querySelectorAll(".service-item").forEach(item => {
+      item.addEventListener("click", () => {
+        const title = item.getAttribute("data-service");
+        modalServiceTitle.textContent = title;
+        serviceModal.classList.add("open");
+      });
+    });
+
+    closeModalBtn.addEventListener("click", () => serviceModal.classList.remove("open"));
+    serviceModal.addEventListener("click", (e) => {
+      if (e.target === serviceModal) serviceModal.classList.remove("open");
+    });
+
+    // 10. Copy Bio Link Button & Toast
+    const copyBioBtn = document.getElementById("copyBioBtn");
+    const toastMsg = document.getElementById("toastMsg");
+    const toastText = document.getElementById("toastText");
+    let toastTimeout;
+
+    function showToast(msg) {
+      toastText.textContent = msg;
+      toastMsg.classList.add("show");
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toastMsg.classList.remove("show"), 2600);
+    }
+
+    copyBioBtn.addEventListener("click", () => {
+      const shareUrl = "https://nhphuhung.my.id";
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast("Đã sao chép liên kết: nhphuhung.my.id ✨");
+      }).catch(() => {
+        showToast("Liên kết: https://nhphuhung.my.id");
+      });
+    });
+  </script>
+</body>
+</html>
