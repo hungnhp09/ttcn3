@@ -1015,6 +1015,73 @@
       font-weight: 800;
     }
 
+    .playlist-search-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .playlist-search-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .playlist-search {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #fff;
+      padding: 8px 12px 8px 32px;
+      border-radius: 11px;
+      font-family: inherit;
+      font-size: 12px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .playlist-search::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .playlist-search:focus {
+      border-color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.12);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11.5px;
+      color: var(--primary);
+      pointer-events: none;
+    }
+
+    .shuffle-btn {
+      height: 33px;
+      padding: 0 11px;
+      border-radius: 11px;
+      border: 1px solid rgba(var(--primary-rgb), 0.45);
+      background: rgba(var(--primary-rgb), 0.16);
+      color: #fff;
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .shuffle-btn:hover {
+      background: var(--primary);
+      color: #000;
+    }
+
     .sc-widget-wrap {
       width: 100%;
       overflow: hidden;
@@ -1448,43 +1515,21 @@
             </div>
           </div>
 
+          <div class="playlist-search-row">
+            <div class="playlist-search-wrap">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" class="playlist-search" id="songSearchInput" placeholder="Tìm nhanh trong 583 bài SoundCloud Likes...">
+            </div>
+            <button type="button" class="shuffle-btn" id="shuffleSongBtn" title="Phát ngẫu nhiên 1 bài trong mục Likes">
+              <i class="fa-solid fa-shuffle"></i>
+              <span>Ngẫu nhiên</span>
+            </button>
+          </div>
+
           <div class="playlist-select-wrap">
             <select class="playlist-select" id="songSelect">
-              <option value="">☁️ Chọn nhạc từ Playlist SoundCloud Likes của Hưng</option>
-              <optgroup label="☁️ SoundCloud Likes Của Hưng (Trực Tuyến)">
-                <option value="sc:1592117511">1. Playlist Speed Up 10 Ngàn Năm Đó Chỉ Là Thành Phố Của Anh</option>
-                <option value="sc:2431955670">2. Chưa có tên 8 — Hưng</option>
-                <option value="sc:2430246300">3. Seachains - BTBT ft Rickystar</option>
-                <option value="sc:831569518">4. Thì em vẫn là lý do — HuyTrần ft Chipeo</option>
-                <option value="sc:674120441">5. Thì em vẫn là lý do — QuangPY</option>
-                <option value="sc:2401431174">6. [1HOUR] THÀNH ĐÔ (Jerk Drill) — GURBANE</option>
-                <option value="sc:2415925944">7. Thành Đô - GUrbane | Drill Remix</option>
-                <option value="sc:152415437">8. Lạc — Nam J Ft Rhymastic</option>
-                <option value="sc:2394181938">9. ĐÔ TRƯỞNG (HDV X SENISA REMIX)</option>
-                <option value="sc:2416532682">10. Đô Trưởng Remix Hot TikTok</option>
-                <option value="sc:2423739048">11. Chưa có tên 7 — Hưng</option>
-                <option value="sc:2423302773">12. Chưa có tên 6 — Hưng</option>
-                <option value="sc:2423214039">13. Chưa có tên 5 — Hưng</option>
-                <option value="sc:1329813616">14. Nếu Biết Đó Là Lần Cuối — Đức Trường</option>
-                <option value="sc:952598728">15. Đô Trưởng — Đạt G</option>
-                <option value="sc:967867081">16. ĐÔ TRƯỞNG | ĐẠT G | BONN!EX FLIP</option>
-                <option value="sc:2067557056">17. Dear My Mom (Prod. by Zeo)</option>
-                <option value="sc:2082012186">18. Dear My Mom — YungBae ft. Huzylee, Lil KD</option>
-                <option value="sc:2412810963">19. Thành Đô | Drill Version</option>
-                <option value="sc:1888093773">20. Chưa Kịp Nói Lời Yêu Em Rmx</option>
-                <option value="sc:2239855595">21. Chưa kịp nói lời yêu anh (prod. Renard x htingale)</option>
-                <option value="sc:1220341315">22. Và rồi em block — SMVL ft. Nhat & Dank</option>
-                <option value="sc:898900204">23. Và rồi em block... — SMVL</option>
-                <option value="sc:2415333279">24. Cho Bản Thân — Habin</option>
-                <option value="sc:2418961032">25. Chưa có tên 4 — Hưng</option>
-                <option value="sc:2418960768">26. Chưa có tên 3 — Hưng</option>
-                <option value="sc:2342290184">27. Habin - Nếu Ngày Mai ft. Họt</option>
-                <option value="sc:2355765935">28. Anh Viết — Habin ft. Neko & PatGM</option>
-                <option value="sc:2416610760">29. Chưa có tên 2 — Hưng</option>
-                <option value="sc:2079734640">30. DRILL ĐẾN THÁNG 13 [HOODTRAP REMIX]</option>
-                <option value="sc:2377419689">31. Không Cần Lo Cho Tao — Haziel</option>
-                <option value="sc:2413962048">32. Đợi Đến Tháng Drill — Nothing</option>
-                <option value="sc:2412728361">33. Mashup Đợi đến tháng 13 Drill</option>
+              <option value="" id="defaultSelectOpt">☁️ Chọn bài hát (Full 583 bài SoundCloud Likes của Hưng)</option>
+              <optgroup id="scLikesOptGroup" label="☁️ Full 583 Bài SoundCloud Likes Của Hưng">
               </optgroup>
               <optgroup label="📀 Playlist SoundCloud Đã Thích (Full Set)">
                 <option value="sc_set:2254479221">📀 Set: HVL — Haziel</option>
@@ -1550,6 +1595,7 @@
   </div>
 
   <script src="https://w.soundcloud.com/player/api.js"></script>
+  <script src="sc_likes.js"></script>
   <script>
     // 1. Live Timer / Date Created Counter
     const createdAt = new Date("2025-04-22T00:00:00");
@@ -1661,12 +1707,70 @@
     let activeEngine = "none"; // 'sc' or 'mp3'
     let scDurationMs = 0;
 
+    // Populate all 583 SoundCloud Liked tracks from window.SC_LIKES_DATA
+    const scLikesOptGroup = document.getElementById("scLikesOptGroup");
+    const defaultSelectOpt = document.getElementById("defaultSelectOpt");
+    const songSearchInput = document.getElementById("songSearchInput");
+    const shuffleSongBtn = document.getElementById("shuffleSongBtn");
+    const scLikesList = Array.isArray(window.SC_LIKES_DATA) ? window.SC_LIKES_DATA : [];
+
+    function renderScLikesOptions(filterKeyword = "") {
+      scLikesOptGroup.innerHTML = "";
+      const kw = filterKeyword.trim().toLowerCase();
+      let matchCount = 0;
+
+      scLikesList.forEach((item, idx) => {
+        const labelText = item.artist
+          ? `${idx + 1}. ${item.title} — ${item.artist}`
+          : `${idx + 1}. ${item.title}`;
+        if (!kw || labelText.toLowerCase().includes(kw)) {
+          const opt = document.createElement("option");
+          opt.value = `sc:${item.id}`;
+          opt.textContent = labelText;
+          scLikesOptGroup.appendChild(opt);
+          matchCount++;
+        }
+      });
+
+      if (kw) {
+        defaultSelectOpt.textContent = `🔍 Tìm thấy ${matchCount} bài phù hợp với "${filterKeyword}" — Bấm để chọn`;
+      } else {
+        defaultSelectOpt.textContent = `☁️ Chọn bài hát (Full ${scLikesList.length} bài SoundCloud Likes của Hưng)`;
+      }
+    }
+
+    renderScLikesOptions("");
+
+    // Build complete master playlist array (all 583 SC Likes + Liked Sets + Local MP3s)
     const playlist = Array.from(songSelect.options)
       .filter(opt => opt.value !== "")
       .map(opt => ({
         file: opt.value,
         title: opt.textContent.replace(/^\d+\.\s*/, "")
       }));
+
+    songSearchInput.addEventListener("input", (e) => {
+      renderScLikesOptions(e.target.value);
+      // If exactly 1 or more matches and user presses Enter, or keep current selection valid
+      if (currentTrackIndex >= 0 && playlist[currentTrackIndex]) {
+        songSelect.value = playlist[currentTrackIndex].file;
+      }
+    });
+
+    songSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && scLikesOptGroup.children.length > 0) {
+        const firstVal = scLikesOptGroup.children[0].value;
+        const idx = playlist.findIndex(item => item.file === firstVal);
+        if (idx !== -1) loadAndPlayTrack(idx);
+      }
+    });
+
+    shuffleSongBtn.addEventListener("click", () => {
+      if (playlist.length === 0) return;
+      const scCount = scLikesList.length > 0 ? scLikesList.length : playlist.length;
+      const randomIdx = Math.floor(Math.random() * scCount);
+      loadAndPlayTrack(randomIdx);
+    });
 
     let currentTrackIndex = -1;
     let triedRemoteFallback = false;
