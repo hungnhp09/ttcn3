@@ -1009,6 +1009,36 @@
       font-size: 12px;
     }
 
+    .playlist-select optgroup {
+      background: #0d0f1a;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .sc-widget-wrap {
+      width: 100%;
+      overflow: hidden;
+      max-height: 1px;
+      opacity: 0.01;
+      pointer-events: none;
+      transition: max-height 0.35s ease, opacity 0.3s ease, margin-top 0.3s ease;
+      border-radius: 12px;
+    }
+
+    .sc-widget-wrap.show {
+      max-height: 170px;
+      opacity: 1;
+      pointer-events: auto;
+      margin-top: 4px;
+    }
+
+    .sc-widget-wrap iframe {
+      width: 100%;
+      height: 160px;
+      border: none;
+      border-radius: 12px;
+    }
+
     /* Quick Service Contact Modal */
     .modal-backdrop {
       position: fixed;
@@ -1391,6 +1421,9 @@
             <canvas id="visualizerCanvas" width="72" height="22"></canvas>
 
             <div class="player-controls">
+              <button class="ctrl-btn" id="toggleScWidgetBtn" title="Hiện/Ẩn bảng SoundCloud gốc">
+                <i class="fab fa-soundcloud"></i>
+              </button>
               <button class="ctrl-btn" id="prevSongBtn" title="Bài trước">
                 <i class="fa-solid fa-backward-step"></i>
               </button>
@@ -1417,17 +1450,71 @@
 
           <div class="playlist-select-wrap">
             <select class="playlist-select" id="songSelect">
-              <option value="">🎵 Play Music — Chọn bài hát yêu thích</option>
-              <option value="deanhluongthien.mp3">1. Để Anh Lương Thiện</option>
-              <option value="emcuoiroia.mp3">2. Em Cưới Rồi À</option>
-              <option value="64uhq425xy.mp3">3. Tháp Yêu</option>
-              <option value="bautroi.mp3">4. Bầu Trời Hoa Vương</option>
-              <option value="emgieo.mp3">5. Từ Em Mà Ra</option>
-              <option value="duyen.mp3">6. Duyên Trời Lấy 2</option>
-              <option value="nang.mp3">7. Nắng Cũ</option>
-              <option value="3107x ghequa.mp3">8. 3107 x Ghé Qua</option>
+              <option value="">☁️ Chọn nhạc từ Playlist SoundCloud Likes của Hưng</option>
+              <optgroup label="☁️ SoundCloud Likes Của Hưng (Trực Tuyến)">
+                <option value="sc:1592117511">1. Playlist Speed Up 10 Ngàn Năm Đó Chỉ Là Thành Phố Của Anh</option>
+                <option value="sc:2431955670">2. Chưa có tên 8 — Hưng</option>
+                <option value="sc:2430246300">3. Seachains - BTBT ft Rickystar</option>
+                <option value="sc:831569518">4. Thì em vẫn là lý do — HuyTrần ft Chipeo</option>
+                <option value="sc:674120441">5. Thì em vẫn là lý do — QuangPY</option>
+                <option value="sc:2401431174">6. [1HOUR] THÀNH ĐÔ (Jerk Drill) — GURBANE</option>
+                <option value="sc:2415925944">7. Thành Đô - GUrbane | Drill Remix</option>
+                <option value="sc:152415437">8. Lạc — Nam J Ft Rhymastic</option>
+                <option value="sc:2394181938">9. ĐÔ TRƯỞNG (HDV X SENISA REMIX)</option>
+                <option value="sc:2416532682">10. Đô Trưởng Remix Hot TikTok</option>
+                <option value="sc:2423739048">11. Chưa có tên 7 — Hưng</option>
+                <option value="sc:2423302773">12. Chưa có tên 6 — Hưng</option>
+                <option value="sc:2423214039">13. Chưa có tên 5 — Hưng</option>
+                <option value="sc:1329813616">14. Nếu Biết Đó Là Lần Cuối — Đức Trường</option>
+                <option value="sc:952598728">15. Đô Trưởng — Đạt G</option>
+                <option value="sc:967867081">16. ĐÔ TRƯỞNG | ĐẠT G | BONN!EX FLIP</option>
+                <option value="sc:2067557056">17. Dear My Mom (Prod. by Zeo)</option>
+                <option value="sc:2082012186">18. Dear My Mom — YungBae ft. Huzylee, Lil KD</option>
+                <option value="sc:2412810963">19. Thành Đô | Drill Version</option>
+                <option value="sc:1888093773">20. Chưa Kịp Nói Lời Yêu Em Rmx</option>
+                <option value="sc:2239855595">21. Chưa kịp nói lời yêu anh (prod. Renard x htingale)</option>
+                <option value="sc:1220341315">22. Và rồi em block — SMVL ft. Nhat & Dank</option>
+                <option value="sc:898900204">23. Và rồi em block... — SMVL</option>
+                <option value="sc:2415333279">24. Cho Bản Thân — Habin</option>
+                <option value="sc:2418961032">25. Chưa có tên 4 — Hưng</option>
+                <option value="sc:2418960768">26. Chưa có tên 3 — Hưng</option>
+                <option value="sc:2342290184">27. Habin - Nếu Ngày Mai ft. Họt</option>
+                <option value="sc:2355765935">28. Anh Viết — Habin ft. Neko & PatGM</option>
+                <option value="sc:2416610760">29. Chưa có tên 2 — Hưng</option>
+                <option value="sc:2079734640">30. DRILL ĐẾN THÁNG 13 [HOODTRAP REMIX]</option>
+                <option value="sc:2377419689">31. Không Cần Lo Cho Tao — Haziel</option>
+                <option value="sc:2413962048">32. Đợi Đến Tháng Drill — Nothing</option>
+                <option value="sc:2412728361">33. Mashup Đợi đến tháng 13 Drill</option>
+              </optgroup>
+              <optgroup label="📀 Playlist SoundCloud Đã Thích (Full Set)">
+                <option value="sc_set:2254479221">📀 Set: HVL — Haziel</option>
+                <option value="sc_set:2193328958">📀 Set: Tao Phải Thành Công</option>
+                <option value="sc_set:737291358">📀 Set: HAPIER (MARSHMELLO)</option>
+                <option value="sc_set:2224844783">📀 Set: freestyle0204 — Mason Nguyễn</option>
+                <option value="sc_set:2067126549">📀 Set: Flames</option>
+                <option value="sc_set:2191240283">📀 Set: Feel at home — Bray</option>
+                <option value="sc_set:2157684671">📀 Set: Sai Rồi</option>
+              </optgroup>
+              <optgroup label="🎵 Nhạc MP3 Gốc Của Trang">
+                <option value="deanhluongthien.mp3">🎵 Để Anh Lương Thiện</option>
+                <option value="emcuoiroia.mp3">🎵 Em Cưới Rồi À</option>
+                <option value="64uhq425xy.mp3">🎵 Tháp Yêu</option>
+                <option value="bautroi.mp3">🎵 Bầu Trời Hoa Vương</option>
+                <option value="emgieo.mp3">🎵 Từ Em Mà Ra</option>
+                <option value="duyen.mp3">🎵 Duyên Trời Lấy 2</option>
+                <option value="nang.mp3">🎵 Nắng Cũ</option>
+                <option value="3107x ghequa.mp3">🎵 3107 x Ghé Qua</option>
+              </optgroup>
             </select>
             <i class="fa-solid fa-chevron-down select-chevron"></i>
+          </div>
+
+          <div class="sc-widget-wrap" id="scWidgetWrap">
+            <iframe
+              id="scWidgetFrame"
+              allow="autoplay; encrypted-media"
+              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1592117511&color=%23ff9d00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false">
+            </iframe>
           </div>
 
           <audio id="bgMusic" loop preload="none"></audio>
@@ -1462,6 +1549,7 @@
     <span id="toastText">Đã sao chép liên kết trang cá nhân!</span>
   </div>
 
+  <script src="https://w.soundcloud.com/player/api.js"></script>
   <script>
     // 1. Live Timer / Date Created Counter
     const createdAt = new Date("2025-04-22T00:00:00");
@@ -1545,7 +1633,7 @@
     }
     setTimeout(runTypewriter, 1500);
 
-    // 4. Studio Music Player + Animated Visualizer Bars
+    // 4. Studio Music Player (Supports SoundCloud Likes + Local/Remote MP3)
     const REMOTE_BASE = "https://nhphuhung.my.id/";
     const audio = document.getElementById("bgMusic");
     const songSelect = document.getElementById("songSelect");
@@ -1553,6 +1641,9 @@
     const playPauseIcon = document.getElementById("playPauseIcon");
     const prevSongBtn = document.getElementById("prevSongBtn");
     const nextSongBtn = document.getElementById("nextSongBtn");
+    const toggleScWidgetBtn = document.getElementById("toggleScWidgetBtn");
+    const scWidgetWrap = document.getElementById("scWidgetWrap");
+    const scIframe = document.getElementById("scWidgetFrame");
     const currentSongTitle = document.getElementById("currentSongTitle");
     const playStateText = document.getElementById("playStateText");
     const vinylDisc = document.getElementById("vinylDisc");
@@ -1565,6 +1656,10 @@
     const volIcon = document.getElementById("volIcon");
 
     audio.volume = parseFloat(volSlider.value);
+
+    const scWidget = window.SC ? SC.Widget(scIframe) : null;
+    let activeEngine = "none"; // 'sc' or 'mp3'
+    let scDurationMs = 0;
 
     const playlist = Array.from(songSelect.options)
       .filter(opt => opt.value !== "")
@@ -1584,20 +1679,64 @@
       return `${m}:${s < 10 ? "0" : ""}${s}`;
     }
 
-    function setPlayingUI(playing) {
+    function setPlayingUI(playing, sourceLabel = "") {
       isAudioPlaying = playing;
       if (playing) {
         playPauseIcon.className = "fa-solid fa-pause";
         vinylDisc.classList.add("playing");
         avatarShowcase.classList.add("music-playing");
-        playStateText.textContent = "🔥 Đang phát nhạc cực cháy";
+        playStateText.textContent = sourceLabel || (activeEngine === "sc" ? "☁️ Đang phát từ SoundCloud Likes" : "🔥 Đang phát nhạc cực cháy");
       } else {
         playPauseIcon.className = "fa-solid fa-play";
         vinylDisc.classList.remove("playing");
         avatarShowcase.classList.remove("music-playing");
-        playStateText.textContent = audio.src ? "⏸ Đã tạm dừng" : "🎧 Chạm Play hoặc chọn bài bên dưới";
+        playStateText.textContent = activeEngine !== "none" ? "⏸ Đã tạm dừng" : "🎧 Chạm Play hoặc chọn bài bên dưới";
       }
     }
+
+    if (scWidget) {
+      scWidget.bind(SC.Widget.Events.READY, () => {
+        scWidget.setVolume(parseFloat(volSlider.value) * 100);
+      });
+
+      scWidget.bind(SC.Widget.Events.PLAY, () => {
+        if (activeEngine === "sc") {
+          setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
+          scWidget.getDuration((d) => {
+            scDurationMs = d || 0;
+            durTimeEl.textContent = formatTime(scDurationMs / 1000);
+          });
+          scWidget.getCurrentSound((sound) => {
+            if (sound && sound.title) {
+              currentSongTitle.textContent = sound.title;
+            }
+          });
+        }
+      });
+
+      scWidget.bind(SC.Widget.Events.PAUSE, () => {
+        if (activeEngine === "sc") setPlayingUI(false);
+      });
+
+      scWidget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+        if (activeEngine === "sc" && scDurationMs > 0) {
+          const pct = (data.currentPosition / scDurationMs) * 100;
+          progressFill.style.width = `${Math.min(100, pct)}%`;
+          curTimeEl.textContent = formatTime(data.currentPosition / 1000);
+        }
+      });
+
+      scWidget.bind(SC.Widget.Events.FINISH, () => {
+        if (activeEngine === "sc") {
+          const nextIdx = currentTrackIndex >= playlist.length - 1 ? 0 : currentTrackIndex + 1;
+          loadAndPlayTrack(nextIdx);
+        }
+      });
+    }
+
+    toggleScWidgetBtn.addEventListener("click", () => {
+      scWidgetWrap.classList.toggle("show");
+    });
 
     function loadAndPlayTrack(index) {
       if (index < 0 || index >= playlist.length) return;
@@ -1605,6 +1744,44 @@
       const track = playlist[index];
       songSelect.value = track.file;
       currentSongTitle.textContent = track.title;
+      progressFill.style.width = "0%";
+      curTimeEl.textContent = "0:00";
+
+      // Check if track is SoundCloud ('sc:' or 'sc_set:')
+      if (track.file.startsWith("sc:") || track.file.startsWith("sc_set:")) {
+        audio.pause();
+        activeEngine = "sc";
+        const isSet = track.file.startsWith("sc_set:");
+        const id = track.file.split(":")[1];
+        const apiUrl = isSet
+          ? `https://api.soundcloud.com/playlists/${id}`
+          : `https://api.soundcloud.com/tracks/${id}`;
+
+        if (scWidget) {
+          playStateText.textContent = "☁️ Đang kết nối SoundCloud...";
+          scWidget.load(apiUrl, {
+            auto_play: true,
+            color: "#ff9d00",
+            hide_related: true,
+            show_comments: false,
+            show_user: true,
+            show_reposts: false,
+            show_teaser: false,
+            callback: () => {
+              scWidget.setVolume(parseFloat(volSlider.value) * 100);
+              scWidget.play();
+              setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
+            }
+          });
+        }
+        return;
+      }
+
+      // Otherwise play MP3 track
+      if (scWidget && activeEngine === "sc") {
+        scWidget.pause();
+      }
+      activeEngine = "mp3";
       triedRemoteFallback = false;
 
       audio.src = "./" + track.file;
@@ -1620,7 +1797,7 @@
     }
 
     audio.addEventListener("error", () => {
-      if (!triedRemoteFallback && currentTrackIndex >= 0) {
+      if (activeEngine === "mp3" && !triedRemoteFallback && currentTrackIndex >= 0) {
         triedRemoteFallback = true;
         const track = playlist[currentTrackIndex];
         audio.src = REMOTE_BASE + encodeURI(track.file);
@@ -1632,6 +1809,7 @@
       const val = e.target.value;
       if (!val) {
         audio.pause();
+        if (scWidget) scWidget.pause();
         setPlayingUI(false);
         return;
       }
@@ -1644,11 +1822,23 @@
         loadAndPlayTrack(0);
         return;
       }
-      if (audio.paused) {
-        audio.play().then(() => setPlayingUI(true));
+      if (activeEngine === "sc" && scWidget) {
+        scWidget.isPaused((paused) => {
+          if (paused) {
+            scWidget.play();
+            setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
+          } else {
+            scWidget.pause();
+            setPlayingUI(false);
+          }
+        });
       } else {
-        audio.pause();
-        setPlayingUI(false);
+        if (audio.paused) {
+          audio.play().then(() => setPlayingUI(true));
+        } else {
+          audio.pause();
+          setPlayingUI(false);
+        }
       }
     });
 
@@ -1663,7 +1853,7 @@
     });
 
     audio.addEventListener("timeupdate", () => {
-      if (audio.duration) {
+      if (activeEngine === "mp3" && audio.duration) {
         const pct = (audio.currentTime / audio.duration) * 100;
         progressFill.style.width = `${pct}%`;
         curTimeEl.textContent = formatTime(audio.currentTime);
@@ -1672,16 +1862,20 @@
     });
 
     progressBarWrap.addEventListener("click", (e) => {
-      if (!audio.duration) return;
       const rect = progressBarWrap.getBoundingClientRect();
       const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      audio.currentTime = ratio * audio.duration;
+      if (activeEngine === "sc" && scWidget && scDurationMs > 0) {
+        scWidget.seekTo(ratio * scDurationMs);
+      } else if (activeEngine === "mp3" && audio.duration) {
+        audio.currentTime = ratio * audio.duration;
+      }
     });
 
     volSlider.addEventListener("input", (e) => {
       const v = parseFloat(e.target.value);
       audio.volume = v;
       audio.muted = v === 0;
+      if (scWidget) scWidget.setVolume(v * 100);
       volIcon.className = v === 0
         ? "fa-solid fa-volume-xmark vol-icon"
         : v < 0.5
@@ -1691,6 +1885,7 @@
 
     volIcon.addEventListener("click", () => {
       audio.muted = !audio.muted;
+      if (scWidget) scWidget.setVolume(audio.muted ? 0 : parseFloat(volSlider.value) * 100);
       volIcon.className = audio.muted
         ? "fa-solid fa-volume-xmark vol-icon"
         : "fa-solid fa-volume-high vol-icon";
