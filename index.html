@@ -1101,6 +1101,128 @@
       border-radius: 12px;
     }
 
+    /* MB Bank QR Payment Card at Bottom */
+    .bank-qr-box {
+      margin-top: 16px;
+      background: rgba(10, 12, 22, 0.56);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      padding: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .bank-qr-box:hover {
+      border-color: rgba(var(--primary-rgb), 0.55);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 20px rgba(var(--primary-rgb), 0.16);
+    }
+
+    .bank-qr-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      margin-bottom: 12px;
+      background: rgba(var(--primary-rgb), 0.12);
+      border: 1px solid rgba(var(--primary-rgb), 0.3);
+      padding: 5px 14px;
+      border-radius: 999px;
+    }
+
+    .bank-qr-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bank-qr-img-wrap {
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(var(--primary-rgb), 0.22);
+      max-width: 230px;
+      width: 100%;
+      transition: transform 0.3s ease;
+    }
+
+    .bank-qr-img-wrap:hover {
+      transform: scale(1.03);
+    }
+
+    .bank-qr-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 10px;
+    }
+
+    .bank-info-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 14px;
+      padding: 11px 14px;
+    }
+
+    .bank-info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      gap: 8px;
+    }
+
+    .bank-info-label {
+      color: var(--text-dim);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .bank-info-val {
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .bank-info-val.highlight {
+      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14.5px;
+    }
+
+    .copy-stk-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #08090f;
+      border: none;
+      border-radius: 8px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .copy-stk-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.12);
+    }
+
     /* Quick Service Contact Modal */
     .modal-backdrop {
       position: fixed;
@@ -1271,7 +1393,7 @@
 
   <!-- Video Background (Local with remote fallback) -->
   <video autoplay muted loop playsinline id="bgVideo">
-    <source src="dante_magna.mp4?v=2" type="video/mp4">
+    <source src="dante_magna.mp4?v=3" type="video/mp4">
     <source src="backlu.mp4" type="video/mp4">
     <source src="https://nhphuhung.my.id/backlu.mp4" type="video/mp4">
   </video>
@@ -1549,6 +1671,38 @@
           </div>
 
           <audio id="bgMusic" loop preload="none"></audio>
+        </div>
+
+        <!-- MB Bank VietQR Payment Info -->
+        <div class="bank-qr-box">
+          <div class="bank-qr-header">
+            <i class="fa-solid fa-building-columns"></i>
+            <span>Thông Tin Thanh Toán VietQR</span>
+          </div>
+          <div class="bank-qr-content">
+            <div class="bank-qr-img-wrap">
+              <img src="mbbank_qr.jpg" alt="VietQR MB Bank - NGUYEN HOANG PHU HUNG - 0921651899" class="bank-qr-img" loading="lazy">
+            </div>
+            <div class="bank-info-list">
+              <div class="bank-info-row">
+                <span class="bank-info-label">Ngân hàng:</span>
+                <span class="bank-info-val">MB BANK</span>
+              </div>
+              <div class="bank-info-row">
+                <span class="bank-info-label">Số tài khoản:</span>
+                <span class="bank-info-val highlight">
+                  <span id="stkNumber">0921651899</span>
+                  <button type="button" class="copy-stk-btn" id="copyStkBtn" title="Sao chép số tài khoản">
+                    <i class="fa-regular fa-copy"></i> Copy
+                  </button>
+                </span>
+              </div>
+              <div class="bank-info-row">
+                <span class="bank-info-label">Chủ tài khoản:</span>
+                <span class="bank-info-val">NGUYEN HOANG PHU HUNG</span>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -2190,6 +2344,36 @@
         showToast("Liên kết: https://nhphuhung.my.id");
       });
     });
+
+    // Copy MB Bank Account Number Button
+    const copyStkBtn = document.getElementById("copyStkBtn");
+    if (copyStkBtn) {
+      copyStkBtn.addEventListener("click", () => {
+        const stk = "0921651899";
+        navigator.clipboard.writeText(stk).then(() => {
+          showToast("Đã sao chép STK MB Bank: 0921651899 ✨");
+        }).catch(() => {
+          showToast("STK MB Bank: 0921651899");
+        });
+      });
+    }
+
+    // Ensure Background Video Plays Continuously Without Freezing
+    const bgVideo = document.getElementById("bgVideo");
+    if (bgVideo) {
+      bgVideo.muted = true;
+      const ensureVideoPlay = () => {
+        if (bgVideo.paused) {
+          bgVideo.play().catch(() => {});
+        }
+      };
+      bgVideo.addEventListener("canplay", ensureVideoPlay);
+      bgVideo.addEventListener("pause", ensureVideoPlay);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) ensureVideoPlay();
+      });
+      document.addEventListener("click", ensureVideoPlay, { once: true });
+    }
   </script>
 </body>
 </html>
