@@ -315,7 +315,7 @@
       z-index: 0;
       animation: rotateMagic 18s linear infinite;
       opacity: 0.85;
-      filter: drop-shadow(0 0 10px var(--primary));
+      will-change: transform;
     }
 
     @keyframes rotateMagic {
@@ -327,16 +327,16 @@
       inset: 6px;
       border-radius: 50%;
       background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary));
-      filter: blur(20px);
+      filter: blur(16px);
       opacity: 0.65;
       animation: rotateAura 5s linear infinite;
       z-index: 0;
-      transition: transform 0.2s ease, opacity 0.2s ease;
+      will-change: transform;
+      transition: opacity 0.2s ease;
     }
 
     .avatar-showcase.music-playing .avatar-aura {
       opacity: 0.92;
-      filter: blur(24px);
       animation-duration: 2.5s;
     }
 
@@ -355,11 +355,6 @@
       z-index: 1;
       border: 2.5px solid rgba(255, 255, 255, 0.5);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .avatar-showcase:hover .avatar {
-      transform: scale(1.05);
     }
 
     .avatar-border {
@@ -371,7 +366,7 @@
       transform: translate(-50%, -50%);
       pointer-events: none;
       z-index: 2;
-      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.65));
+      will-change: transform;
       animation: floatFrame 3.8s ease-in-out infinite;
     }
 
@@ -1708,6 +1703,7 @@
       scLikesOptGroup.innerHTML = "";
       const kw = filterKeyword.trim().toLowerCase();
       let matchCount = 0;
+      const frag = document.createDocumentFragment();
 
       scLikesList.forEach((item, idx) => {
         const labelText = item.artist
@@ -1717,10 +1713,12 @@
           const opt = document.createElement("option");
           opt.value = `sc:${item.id}`;
           opt.textContent = labelText;
-          scLikesOptGroup.appendChild(opt);
+          frag.appendChild(opt);
           matchCount++;
         }
       });
+
+      scLikesOptGroup.appendChild(frag);
 
       if (kw) {
         defaultSelectOpt.textContent = `🔍 Tìm thấy ${matchCount} bài phù hợp với "${filterKeyword}" — Bấm để chọn`;
@@ -1990,12 +1988,13 @@
     const visCtx = visCanvas.getContext("2d");
     const barCount = 12;
     const barHeights = new Array(barCount).fill(3);
+    let cachedPrimaryColor = "#ff9d00";
 
     function drawVisualizer() {
       visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
       const barWidth = 4;
       const gap = 2;
-      const primaryColor = getComputedStyle(document.body).getPropertyValue("--primary").trim() || "#ff9d00";
+      visCtx.fillStyle = cachedPrimaryColor;
 
       for (let i = 0; i < barCount; i++) {
         if (isAudioPlaying) {
@@ -2008,7 +2007,6 @@
         const x = i * (barWidth + gap) + 2;
         const y = visCanvas.height - h;
 
-        visCtx.fillStyle = primaryColor;
         visCtx.beginPath();
         visCtx.roundRect(x, y, barWidth, h, 2);
         visCtx.fill();
@@ -2096,16 +2094,19 @@
           }
         }
 
-        ctx.save();
+        // Fast GPU-friendly glow (no expensive shadowBlur)
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha * 0.25;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 2.2, 0, Math.PI * 2);
+        ctx.fill();
+
         ctx.globalAlpha = p.alpha;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = p.color;
         ctx.fill();
-        ctx.restore();
       }
+      ctx.globalAlpha = 1;
       requestAnimationFrame(animateParticles);
     }
     createParticles();
@@ -2113,10 +2114,10 @@
 
     // 7. Theme Switcher & HUD Buttons
     const themes = [
-      { id: "fire", name: "Giao diện: Hỏa Long" },
-      { id: "ice", name: "Giao diện: Băng Giá" },
-      { id: "cyber", name: "Giao diện: Tím Cyber" },
-      { id: "emerald", name: "Giao diện: Lục Bảo" }
+      { id: "fire", name: "Giao diện: Hỏa Long", color: "#ff9d00" },
+      { id: "ice", name: "Giao diện: Băng Giá", color: "#00f0ff" },
+      { id: "cyber", name: "Giao diện: Tím Cyber", color: "#a855f7" },
+      { id: "emerald", name: "Giao diện: Lục Bảo", color: "#10b981" }
     ];
     let themeIdx = 0;
     const themeBtn = document.getElementById("themeBtn");
@@ -2126,6 +2127,7 @@
       themeIdx = (themeIdx + 1) % themes.length;
       document.body.setAttribute("data-theme", themes[themeIdx].id);
       themeText.textContent = themes[themeIdx].name;
+      cachedPrimaryColor = themes[themeIdx].color;
     });
 
     const particleModeBtn = document.getElementById("particleModeBtn");
