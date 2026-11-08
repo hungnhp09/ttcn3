@@ -2,7 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0b12">
   <title>TRANG CÁ NHÂN CỦA HƯNG ✨ | Nguyễn Hoàng Phú Hưng</title>
   <link rel="icon" href="avatar.jpg" type="image/jpeg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -57,7 +58,8 @@
 
     body {
       min-height: 100vh;
-      background: transparent;
+      min-height: 100dvh;
+      background: #07080e;
       color: var(--text-main);
       font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
@@ -75,7 +77,9 @@
       left: 0;
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       object-fit: cover;
+      object-position: center center;
       z-index: -4;
       pointer-events: none;
       filter: saturate(1.18) contrast(1.06);
@@ -1387,16 +1391,107 @@
         width: 42px;
       }
     }
+
+    /* ===== Mobile / Touch Optimization ===== */
+    @media (max-width: 700px) {
+      body {
+        padding: 60px 10px calc(24px + env(safe-area-inset-bottom));
+        align-items: flex-start;
+      }
+      .hud-top-left { top: calc(10px + env(safe-area-inset-top)); left: 10px; }
+      .hud-top-right { top: calc(10px + env(safe-area-inset-top)); right: 10px; gap: 6px; flex-wrap: nowrap; }
+      .fps-badge { padding: 6px 10px; font-size: 11px; }
+      .hud-btn { width: 36px; padding: 0; justify-content: center; }
+
+      /* Lighter glass effect: heavy blur makes phones lag over a playing video */
+      :root { --glass-blur: 9px; }
+      .profile-card { backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px); border-radius: 26px; }
+      .profile-card-wrap { border-radius: 28px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7); }
+      .fps-badge, .hud-btn { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(8, 10, 16, 0.88); }
+      .corner-orb { filter: none; opacity: 0.18; width: 160px; height: 160px; background-image: radial-gradient(circle, currentColor 0%, transparent 70%) !important; background-color: transparent !important; }
+      .corner-orb.top-left { color: var(--primary); }
+      .corner-orb.bottom-right { color: var(--accent); }
+      .avatar-aura { filter: blur(9px); }
+
+      .avatar-showcase { margin-bottom: 10px; }
+      .subtitle-wrap { font-size: 12px; min-height: 34px; margin-bottom: 14px; }
+      .service-item { padding: 10px 11px; gap: 10px; }
+      .service-icon { width: 32px; height: 32px; font-size: 14px; }
+      .service-tag { font-size: 9px; padding: 2px 7px; }
+
+      .social-icons { gap: 6px; padding: 8px; flex-wrap: nowrap; }
+      .social-btn { width: 38px; height: 38px; font-size: 17px; border-radius: 12px; }
+      .social-btn::after { display: none; }
+
+      .uptime-box { padding: 11px 10px; }
+      .uptime-grid { gap: 6px; }
+      .uptime-num { font-size: 15px; }
+      .classic-timer-line { font-size: 10px; }
+
+      /* Music player: stack so the song title stays readable */
+      .music-player { padding: 12px 11px; }
+      .player-top { flex-wrap: wrap; row-gap: 8px; }
+      .now-playing { flex-basis: 100%; }
+      #visualizerCanvas { display: none; }
+      .player-controls { width: 100%; justify-content: center; gap: 12px; }
+      .ctrl-btn { width: 40px; height: 40px; font-size: 14px; }
+      .ctrl-btn.play-toggle { width: 46px; height: 46px; }
+      .volume-wrap { display: none; }
+
+      /* 16px font prevents iOS Safari from auto-zooming into inputs */
+      .playlist-search, .playlist-select { font-size: 16px; }
+      .playlist-search { padding: 9px 12px 9px 32px; }
+      .playlist-select { padding: 11px 34px 11px 12px; }
+      .shuffle-btn { height: 40px; padding: 0 12px; }
+      .shuffle-btn span { display: none; }
+
+      .bank-qr-box { padding: 14px 12px; }
+      .bank-info-row { font-size: 12.5px; flex-wrap: wrap; }
+      .bank-info-val.highlight { font-size: 14px; }
+      .modal-card { padding: 20px 16px; }
+    }
+
+    @media (max-width: 380px) {
+      h1.profile-name { font-size: 20px; }
+      .avatar-showcase { width: 148px; height: 148px; }
+      .avatar { width: 118px; height: 118px; }
+      .avatar-border { width: 154px; height: 154px; }
+      .uptime-num { font-size: 13.5px; }
+      .uptime-txt { font-size: 9px; }
+    }
+
+    /* Touch devices: no sticky hover animations */
+    @media (hover: none) {
+      .service-item:hover, .social-btn:hover, .hud-btn:hover, .ctrl-btn:hover, .bank-qr-img-wrap:hover {
+        transform: none;
+      }
+      .service-item:hover::before { left: -100%; }
+      .service-item:active { background: rgba(var(--primary-rgb), 0.2); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .magic-ring-svg, .avatar-aura, .avatar-border { animation: none; }
+    }
   </style>
 </head>
 <body data-theme="fire">
 
   <!-- Video Background (Local with remote fallback) -->
-  <video autoplay muted loop playsinline id="bgVideo">
+  <video autoplay muted loop playsinline webkit-playsinline preload="auto" poster="dante_poster.jpg" id="bgVideo">
     <source src="dante_magna.mp4?v=3" type="video/mp4">
     <source src="backlu.mp4" type="video/mp4">
     <source src="https://nhphuhung.my.id/backlu.mp4" type="video/mp4">
   </video>
+  <script>
+    // Phones get a lighter portrait-cropped video (smaller download, smoother playback)
+    if (window.matchMedia("(max-width: 700px)").matches) {
+      const v = document.getElementById("bgVideo");
+      v.innerHTML = '<source src="dante_magna_mobile.mp4?v=3" type="video/mp4">' +
+                    '<source src="dante_magna.mp4?v=3" type="video/mp4">' +
+                    '<source src="backlu.mp4" type="video/mp4">';
+      v.load();
+    }
+  </script>
   <div class="bg-overlay"></div>
 
   <!-- Background Particles Canvas -->
@@ -2186,7 +2281,7 @@
 
     function createParticles() {
       particles = [];
-      const count = 80;
+      const count = window.matchMedia("(max-width: 700px)").matches ? 32 : 80;
       for (let i = 0; i < count; i++) {
         particles.push(makeParticle());
       }
@@ -2373,6 +2468,7 @@
         if (!document.hidden) ensureVideoPlay();
       });
       document.addEventListener("click", ensureVideoPlay, { once: true });
+      document.addEventListener("touchstart", ensureVideoPlay, { once: true, passive: true });
     }
   </script>
 </body>
