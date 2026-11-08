@@ -1483,14 +1483,27 @@
     <source src="https://nhphuhung.my.id/backlu.mp4" type="video/mp4">
   </video>
   <script>
-    // Phones get a lighter portrait-cropped video (smaller download, smoother playback)
-    if (window.matchMedia("(max-width: 700px)").matches) {
+    // Only real touch phones held in portrait get the lighter portrait-cropped video.
+    // Laptops/desktops always use the full 16:9 video, even if the window is narrow.
+    (function () {
       const v = document.getElementById("bgVideo");
-      v.innerHTML = '<source src="dante_magna_mobile.mp4?v=3" type="video/mp4">' +
-                    '<source src="dante_magna.mp4?v=3" type="video/mp4">' +
-                    '<source src="backlu.mp4" type="video/mp4">';
-      v.load();
-    }
+      const phoneMQ = window.matchMedia("(pointer: coarse) and (hover: none) and (orientation: portrait) and (max-width: 700px)");
+      const DESKTOP = '<source src="dante_magna.mp4?v=3" type="video/mp4">' +
+                      '<source src="backlu.mp4" type="video/mp4">' +
+                      '<source src="https://nhphuhung.my.id/backlu.mp4" type="video/mp4">';
+      const MOBILE = '<source src="dante_magna_mobile.mp4?v=3" type="video/mp4">' + DESKTOP;
+      let current = "desktop";
+      function apply() {
+        const want = phoneMQ.matches ? "mobile" : "desktop";
+        if (want === current) return;
+        current = want;
+        v.innerHTML = want === "mobile" ? MOBILE : DESKTOP;
+        v.load();
+        v.play().catch(() => {});
+      }
+      if (phoneMQ.matches) apply();
+      phoneMQ.addEventListener("change", apply);
+    })();
   </script>
   <div class="bg-overlay"></div>
 
