@@ -1082,6 +1082,7 @@
     }
 
     .sc-widget-wrap {
+      position: relative;
       width: 100%;
       overflow: hidden;
       max-height: 1px;
@@ -1103,6 +1104,17 @@
       height: 160px;
       border: none;
       border-radius: 12px;
+      display: block;
+    }
+
+    /* Spare (not currently playing) SoundCloud player stays loaded but invisible */
+    .sc-widget-wrap iframe.sc-frame-inactive {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;
     }
 
     /* MB Bank QR Payment Card at Bottom */
@@ -1773,6 +1785,13 @@
               allow="autoplay; encrypted-media"
               src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1592117511&color=%23ff9d00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false">
             </iframe>
+            <!-- Spare player: pre-loads the next random track so Shuffle can start it instantly on phones -->
+            <iframe
+              id="scWidgetFrame2"
+              class="sc-frame-inactive"
+              allow="autoplay; encrypted-media"
+              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1592117511&color=%23ff9d00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false">
+            </iframe>
           </div>
 
           <audio id="bgMusic" loop preload="none"></audio>
@@ -1934,7 +1953,7 @@
     const nextSongBtn = document.getElementById("nextSongBtn");
     const toggleScWidgetBtn = document.getElementById("toggleScWidgetBtn");
     const scWidgetWrap = document.getElementById("scWidgetWrap");
-    const scIframe = document.getElementById("scWidgetFrame");
+    const scFrames = [document.getElementById("scWidgetFrame"), document.getElementById("scWidgetFrame2")];
     const currentSongTitle = document.getElementById("currentSongTitle");
     const playStateText = document.getElementById("playStateText");
     const vinylDisc = document.getElementById("vinylDisc");
@@ -1948,7 +1967,10 @@
 
     audio.volume = parseFloat(volSlider.value);
 
-    const scWidget = window.SC ? SC.Widget(scIframe) : null;
+    // Two SoundCloud players: one plays, the spare pre-loads the next shuffle track.
+    const scWidgets = window.SC ? scFrames.map(f => SC.Widget(f)) : [];
+    let activeWidgetIdx = 0;
+    let scWidget = scWidgets[0] || null; // the player that is currently active
     let activeEngine = "none"; // 'sc' or 'mp3'
     let scDurationMs = 0;
 
@@ -2015,6 +2037,8 @@
 
     shuffleSongBtn.addEventListener("click", () => {
       if (playlist.length === 0) return;
+      // Fast path: a random track is already pre-loaded, so play() runs inside this tap (works on phones)
+      if (playPreloadedNow()) return;
       const scCount = scLikesList.length > 0 ? scLikesList.length : playlist.length;
       const randomIdx = Math.floor(Math.random() * scCount);
       loadAndPlayTrack(randomIdx);
@@ -2074,12 +2098,14 @@
       }
     }
 
-    if (scWidget) {
-      scWidget.bind(SC.Widget.Events.READY, () => {
-        scWidget.setVolume(parseFloat(volSlider.value) * 100);
+    // Events are bound on both players; only the active one is allowed to drive the UI.
+    scWidgets.forEach((w) => {
+      w.bind(SC.Widget.Events.READY, () => {
+        w.setVolume(parseFloat(volSlider.value) * 100);
       });
 
-      scWidget.bind(SC.Widget.Events.PLAY, () => {
+      w.bind(SC.Widget.Events.PLAY, () => {
+        if (w !== scWidget) return;
         if (activeEngine === "sc") {
           clearPlayWatch();
           setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
@@ -2092,14 +2118,17 @@
               currentSongTitle.textContent = sound.title;
             }
           });
+          if (!preloaded) preloadNextShuffle();
         }
       });
 
-      scWidget.bind(SC.Widget.Events.PAUSE, () => {
+      w.bind(SC.Widget.Events.PAUSE, () => {
+        if (w !== scWidget) return;
         if (activeEngine === "sc") setPlayingUI(false);
       });
 
-      scWidget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+      w.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+        if (w !== scWidget) return;
         if (activeEngine === "sc" && scDurationMs > 0) {
           const pct = (data.currentPosition / scDurationMs) * 100;
           progressFill.style.width = `${Math.min(100, pct)}%`;
@@ -2107,12 +2136,104 @@
         }
       });
 
-      scWidget.bind(SC.Widget.Events.FINISH, () => {
+      w.bind(SC.Widget.Events.FINISH, () => {
+        if (w !== scWidget) return;
         if (activeEngine === "sc") {
           const nextIdx = currentTrackIndex >= playlist.length - 1 ? 0 : currentTrackIndex + 1;
           loadAndPlayTrack(nextIdx);
         }
       });
+    });
+
+    // ===== Instant Shuffle on phones =====
+    // iPhone/Android only let audio start from code that runs directly inside a tap.
+    // Loading a track takes a second or two (too late), so the spare player pre-loads the next
+    // random track in the background. Tapping Shuffle then just calls play() on a ready player.
+    let preloaded = null; // { trackIdx, widgetIdx, ready }
+
+    function scApiUrlFor(track) {
+      const id = track.file.split(":")[1];
+      return track.file.startsWith("sc_set:")
+        ? `https://api.soundcloud.com/playlists/${id}`
+        : `https://api.soundcloud.com/tracks/${id}`;
+    }
+
+    function pickRandomTrackIndex() {
+      const scCount = scLikesList.length > 0 ? scLikesList.length : playlist.length;
+      if (scCount <= 1) return 0;
+      let idx;
+      do { idx = Math.floor(Math.random() * scCount); } while (idx === currentTrackIndex);
+      return idx;
+    }
+
+    function preloadNextShuffle() {
+      if (scWidgets.length < 2 || playlist.length === 0) return;
+      const trackIdx = pickRandomTrackIndex();
+      const track = playlist[trackIdx];
+      if (!track || !(track.file.startsWith("sc:") || track.file.startsWith("sc_set:"))) return;
+      const widgetIdx = 1 - activeWidgetIdx;
+      const w = scWidgets[widgetIdx];
+      const token = { trackIdx, widgetIdx, ready: false };
+      preloaded = token;
+      w.load(scApiUrlFor(track), {
+        auto_play: false,
+        color: "#ff9d00",
+        hide_related: true,
+        show_comments: false,
+        show_user: true,
+        show_reposts: false,
+        show_teaser: false,
+        callback: () => {
+          if (preloaded !== token) return;
+          w.setVolume(parseFloat(volSlider.value) * 100);
+          token.ready = true;
+        }
+      });
+      // If this track never becomes ready (removed/private), try another one
+      setTimeout(() => {
+        if (preloaded === token && !token.ready) preloadNextShuffle();
+      }, 9000);
+    }
+
+    // Must run synchronously inside the tap handler so the browser accepts play()
+    function playPreloadedNow() {
+      if (!preloaded || !preloaded.ready) return false;
+      const p = preloaded;
+      preloaded = null;
+      const oldWidget = scWidget;
+      const newWidget = scWidgets[p.widgetIdx];
+
+      activeEngine = "sc";
+      audio.pause();
+      currentTrackIndex = p.trackIdx;
+      const track = playlist[p.trackIdx];
+      songSelect.value = track.file;
+      currentSongTitle.textContent = track.title;
+      progressFill.style.width = "0%";
+      curTimeEl.textContent = "0:00";
+      scDurationMs = 0;
+
+      newWidget.setVolume(parseFloat(volSlider.value) * 100);
+      newWidget.play();
+
+      // Switch active player (the old one is paused; its events are now ignored)
+      activeWidgetIdx = p.widgetIdx;
+      scWidget = newWidget;
+      scFrames.forEach((f, i) => f.classList.toggle("sc-frame-inactive", i !== activeWidgetIdx));
+      if (oldWidget && oldWidget !== newWidget) oldWidget.pause();
+
+      setPlayingUI(false);
+      playStateText.textContent = "☁️ Đang kết nối SoundCloud...";
+      armPlayWatch();
+
+      // Get the next random track ready in the spare player
+      setTimeout(preloadNextShuffle, 400);
+      return true;
+    }
+
+    // Start getting the first random track ready as soon as the page is idle
+    if (scWidgets.length === 2) {
+      window.addEventListener("load", () => setTimeout(() => { if (!preloaded) preloadNextShuffle(); }, 1500));
     }
 
     toggleScWidgetBtn.addEventListener("click", () => {
@@ -2203,6 +2324,7 @@
 
     playPauseBtn.addEventListener("click", () => {
       if (currentTrackIndex === -1) {
+        if (playPreloadedNow()) return;
         loadAndPlayTrack(0);
         return;
       }
