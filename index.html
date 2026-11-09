@@ -2046,6 +2046,34 @@
       }
     }
 
+    // Phones block autoplay inside the SoundCloud iframe unless the tap happens on the iframe itself.
+    // If playback does not actually start, show the real SoundCloud player so one tap unlocks audio.
+    let playWatchTimer = null;
+    let widgetAutoOpened = false;
+
+    function armPlayWatch() {
+      clearTimeout(playWatchTimer);
+      playWatchTimer = setTimeout(() => {
+        if (activeEngine === "sc" && !isAudioPlaying) {
+          setPlayingUI(false);
+          playStateText.textContent = "👆 Chạm nút ▶ trong khung SoundCloud bên dưới để phát";
+          if (!scWidgetWrap.classList.contains("show")) {
+            scWidgetWrap.classList.add("show");
+            widgetAutoOpened = true;
+          }
+          setTimeout(() => scWidgetWrap.scrollIntoView({ behavior: "smooth", block: "nearest" }), 380);
+        }
+      }, 4500);
+    }
+
+    function clearPlayWatch() {
+      clearTimeout(playWatchTimer);
+      if (widgetAutoOpened) {
+        scWidgetWrap.classList.remove("show");
+        widgetAutoOpened = false;
+      }
+    }
+
     if (scWidget) {
       scWidget.bind(SC.Widget.Events.READY, () => {
         scWidget.setVolume(parseFloat(volSlider.value) * 100);
@@ -2053,6 +2081,7 @@
 
       scWidget.bind(SC.Widget.Events.PLAY, () => {
         if (activeEngine === "sc") {
+          clearPlayWatch();
           setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
           scWidget.getDuration((d) => {
             scDurationMs = d || 0;
@@ -2111,6 +2140,9 @@
 
         if (scWidget) {
           playStateText.textContent = "☁️ Đang kết nối SoundCloud...";
+          setPlayingUI(false);
+          playStateText.textContent = "☁️ Đang kết nối SoundCloud...";
+          armPlayWatch();
           scWidget.load(apiUrl, {
             auto_play: true,
             color: "#ff9d00",
@@ -2121,8 +2153,8 @@
             show_teaser: false,
             callback: () => {
               scWidget.setVolume(parseFloat(volSlider.value) * 100);
+              // Do not fake the "playing" state: the PLAY event sets it only when audio truly starts
               scWidget.play();
-              setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
             }
           });
         }
@@ -2178,7 +2210,7 @@
         scWidget.isPaused((paused) => {
           if (paused) {
             scWidget.play();
-            setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
+            armPlayWatch();
           } else {
             scWidget.pause();
             setPlayingUI(false);
