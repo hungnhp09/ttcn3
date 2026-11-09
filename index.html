@@ -1107,14 +1107,15 @@
       display: block;
     }
 
-    /* Spare (not currently playing) SoundCloud player stays loaded but invisible */
+    /* Spare (not currently playing) SoundCloud player stays loaded with real dimensions offscreen */
     .sc-widget-wrap iframe.sc-frame-inactive {
       position: absolute;
       top: 0;
-      left: 0;
-      opacity: 0;
+      left: -9999px;
+      width: 100%;
+      height: 160px;
+      opacity: 0.05;
       pointer-events: none;
-      z-index: -1;
     }
 
     /* MB Bank QR Payment Card at Bottom */
@@ -2197,7 +2198,7 @@
 
     // Must run synchronously inside the tap handler so the browser accepts play()
     function playPreloadedNow() {
-      if (!preloaded || !preloaded.ready) return false;
+      if (!preloaded) return false;
       const p = preloaded;
       preloaded = null;
       const oldWidget = scWidget;
@@ -2207,8 +2208,10 @@
       audio.pause();
       currentTrackIndex = p.trackIdx;
       const track = playlist[p.trackIdx];
-      songSelect.value = track.file;
-      currentSongTitle.textContent = track.title;
+      if (track) {
+        songSelect.value = track.file;
+        currentSongTitle.textContent = track.title;
+      }
       progressFill.style.width = "0%";
       curTimeEl.textContent = "0:00";
       scDurationMs = 0;
@@ -2222,18 +2225,17 @@
       scFrames.forEach((f, i) => f.classList.toggle("sc-frame-inactive", i !== activeWidgetIdx));
       if (oldWidget && oldWidget !== newWidget) oldWidget.pause();
 
-      setPlayingUI(false);
-      playStateText.textContent = "☁️ Đang kết nối SoundCloud...";
+      setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
       armPlayWatch();
 
       // Get the next random track ready in the spare player
-      setTimeout(preloadNextShuffle, 400);
+      setTimeout(preloadNextShuffle, 600);
       return true;
     }
 
-    // Start getting the first random track ready as soon as the page is idle
+    // Start getting the first random track ready immediately (do NOT wait for 17MB video/window.load)
     if (scWidgets.length === 2) {
-      window.addEventListener("load", () => setTimeout(() => { if (!preloaded) preloadNextShuffle(); }, 1500));
+      setTimeout(() => { if (!preloaded) preloadNextShuffle(); }, 150);
     }
 
     toggleScWidgetBtn.addEventListener("click", () => {
@@ -2260,10 +2262,9 @@
           : `https://api.soundcloud.com/tracks/${id}`;
 
         if (scWidget) {
-          playStateText.textContent = "☁️ Đang kết nối SoundCloud...";
-          setPlayingUI(false);
-          playStateText.textContent = "☁️ Đang kết nối SoundCloud...";
+          setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
           armPlayWatch();
+          try { scWidget.play(); } catch(e) {}
           scWidget.load(apiUrl, {
             auto_play: true,
             color: "#ff9d00",
@@ -2274,8 +2275,8 @@
             show_teaser: false,
             callback: () => {
               scWidget.setVolume(parseFloat(volSlider.value) * 100);
-              // Do not fake the "playing" state: the PLAY event sets it only when audio truly starts
               scWidget.play();
+              setPlayingUI(true, "☁️ Đang phát từ SoundCloud Likes");
             }
           });
         }
