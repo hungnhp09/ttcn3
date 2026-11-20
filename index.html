@@ -106,7 +106,7 @@
       padding: 66px 16px 36px;
     }
 
-    /* Video Background & Cinematic Vignette */
+    /* Video Background (Direct Hardware Overlay - NO CSS filter so GPU decodes at 0% shader cost) */
     #bgVideo {
       position: fixed;
       inset: 0;
@@ -116,12 +116,6 @@
       object-position: center center;
       z-index: -4;
       pointer-events: none;
-      filter: saturate(1.22) contrast(1.06) brightness(1);
-      transition: filter 0.5s ease;
-    }
-
-    body.clear-mode #bgVideo {
-      filter: saturate(1.25) contrast(1.08) brightness(1.03);
     }
 
     .bg-overlay {
@@ -131,23 +125,21 @@
       background:
         radial-gradient(circle at 50% 50%, rgba(4, 5, 10, 0.04) 0%, rgba(4, 5, 10, 0.24) 100%);
       pointer-events: none;
-      transition: opacity 0.45s ease;
     }
 
     body.clear-mode .bg-overlay {
-      opacity: 0.28;
+      opacity: 0.25;
     }
 
-    /* Canvases for Ambient Particles & Click Sparkle FX */
-    #particleCanvas, #fxCanvas {
+    /* Ambient Particles Canvas */
+    #particleCanvas {
       position: fixed;
       inset: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
+      z-index: -2;
     }
-    #particleCanvas { z-index: -2; }
-    #fxCanvas { z-index: 999; }
 
     /* ===== Top HUD Bars ===== */
     .hud-top-left {
@@ -164,20 +156,15 @@
       display: flex;
       align-items: center;
       gap: 9px;
-      background: rgba(8, 10, 18, 0.78);
-      backdrop-filter: blur(16px) saturate(160%);
-      -webkit-backdrop-filter: blur(16px) saturate(160%);
-      border: 1px solid rgba(57, 255, 20, 0.34);
+      background: rgba(8, 10, 18, 0.86);
+      border: 1px solid rgba(57, 255, 20, 0.4);
       padding: 7px 14px;
       border-radius: 999px;
       font-family: 'Orbitron', monospace;
       font-size: 12px;
       font-weight: 800;
       color: #4ade80;
-      box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.48),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12),
-        0 0 18px rgba(57, 255, 20, 0.14);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
       letter-spacing: 0.8px;
     }
 
@@ -186,8 +173,7 @@
       height: 7px;
       border-radius: 50%;
       background: #39ff14;
-      box-shadow: 0 0 10px #39ff14, 0 0 18px rgba(57, 255, 20, 0.6);
-      animation: pulseDot 1.3s infinite ease-in-out;
+      box-shadow: 0 0 8px #39ff14;
     }
 
     .ping-tag {
@@ -196,11 +182,6 @@
       border-left: 1px solid rgba(255, 255, 255, 0.18);
       padding-left: 8px;
       font-variant-numeric: tabular-nums;
-    }
-
-    @keyframes pulseDot {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(0.68); opacity: 0.45; }
     }
 
     .hud-top-right {
@@ -216,10 +197,8 @@
     }
 
     .hud-btn {
-      background: rgba(8, 10, 18, 0.76);
-      backdrop-filter: blur(16px) saturate(160%);
-      -webkit-backdrop-filter: blur(16px) saturate(160%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(8, 10, 18, 0.84);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       color: #f8fafc;
       height: 36px;
       padding: 0 14px;
@@ -231,15 +210,14 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.42);
     }
 
     .hud-btn:hover {
-      background: rgba(var(--primary-rgb), 0.22);
+      background: rgba(var(--primary-rgb), 0.24);
       border-color: rgba(var(--primary-rgb), 0.75);
       transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(var(--primary-rgb), 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 
     .hud-btn:active {
@@ -249,87 +227,38 @@
     .hud-btn i {
       color: var(--primary);
       font-size: 13px;
-      transition: transform 0.3s ease;
     }
 
-    .hud-btn:hover i {
-      transform: rotate(18deg) scale(1.15);
-    }
-
-    /* ===== Main Profile Card with Crystal-Clear Transparent Glass & Masked Conic Border Beam ===== */
+    /* ===== Main Profile Card with Crystal-Clear Transparent Glass (Zero-Lag GPU Optimized) ===== */
     .profile-card-wrap {
       position: relative;
       width: 100%;
       max-width: 610px;
-      border-radius: 34px;
-      padding: 0;
-      background: transparent;
-      box-shadow:
-        0 24px 70px rgba(0, 0, 0, 0.65),
-        0 0 45px rgba(var(--primary-rgb), 0.14);
-      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
-      transform-style: preserve-3d;
-      will-change: transform;
+      border-radius: 32px;
       z-index: 10;
     }
 
-    /* Masked 2px Border Ring so spinning conic beam NEVER blocks the transparent card center */
     .card-border-beam {
-      position: absolute;
-      inset: 0;
-      border-radius: 32px;
-      padding: 2px;
-      pointer-events: none;
-      z-index: 4;
-      overflow: hidden;
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-    }
-
-    .card-border-beam::before {
-      content: "";
-      position: absolute;
-      inset: -65%;
-      background: conic-gradient(
-        from 0deg,
-        rgba(255, 255, 255, 0.22) 0deg,
-        var(--primary) 65deg,
-        var(--secondary) 130deg,
-        rgba(255, 255, 255, 0.22) 180deg,
-        var(--accent) 255deg,
-        var(--primary) 325deg,
-        rgba(255, 255, 255, 0.22) 360deg
-      );
-      animation: spinBorderBeam 6s linear infinite;
-    }
-
-    @keyframes spinBorderBeam {
-      to { transform: rotate(360deg); }
+      display: none;
     }
 
     .profile-card {
       position: relative;
       width: 100%;
-      background:
-        radial-gradient(500px circle at var(--card-mx) var(--card-my), rgba(var(--primary-rgb), 0.08), transparent 45%),
-        var(--card-bg);
-      backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+      background: var(--card-bg);
       border-radius: 32px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      padding: 38px 30px 26px;
+      border: 1.5px solid rgba(var(--primary-rgb), 0.48);
+      padding: 36px 28px 26px;
       text-align: center;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.82);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
       z-index: 1;
       overflow: hidden;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.25),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.08);
-      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+        0 20px 50px rgba(0, 0, 0, 0.65),
+        0 0 26px rgba(var(--primary-rgb), 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
     }
 
-    /* Subtle Fine Luxury Micro-Grain Texture */
     .profile-card::before {
       display: none;
     }
@@ -341,24 +270,20 @@
       height: 18px;
       pointer-events: none;
       z-index: 3;
-      opacity: 0.45;
-      transition: opacity 0.3s ease, border-color 0.3s ease;
+      opacity: 0.5;
     }
     .card-corner.tl { top: 14px; left: 14px; border-top: 2px solid var(--primary); border-left: 2px solid var(--primary); border-top-left-radius: 6px; }
     .card-corner.tr { top: 14px; right: 14px; border-top: 2px solid var(--primary); border-right: 2px solid var(--primary); border-top-right-radius: 6px; }
     .card-corner.bl { bottom: 14px; left: 14px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); border-bottom-left-radius: 6px; }
     .card-corner.br { bottom: 14px; right: 14px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); border-bottom-right-radius: 6px; }
 
-    /* Refined Ambient Edge Orbs (hidden so background video stays 100% crystal clear) */
     .corner-orb {
       display: none;
     }
 
     /* Clear Mode (Ultra Crystal Translucent) */
     body.clear-mode .profile-card {
-      background: rgba(6, 8, 14, 0.1);
-      backdrop-filter: blur(1.5px);
-      -webkit-backdrop-filter: blur(1.5px);
+      background: rgba(6, 8, 14, 0.08);
     }
 
     .card-content {
@@ -366,28 +291,8 @@
       z-index: 2;
     }
 
-    /* Staggered Entrance Choreography */
     .reveal-item {
-      animation: cardReveal 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-    .reveal-d1 { animation-delay: 0.04s; }
-    .reveal-d2 { animation-delay: 0.10s; }
-    .reveal-d3 { animation-delay: 0.16s; }
-    .reveal-d4 { animation-delay: 0.22s; }
-    .reveal-d5 { animation-delay: 0.28s; }
-    .reveal-d6 { animation-delay: 0.34s; }
-    .reveal-d7 { animation-delay: 0.40s; }
-    .reveal-d8 { animation-delay: 0.46s; }
-
-    @keyframes cardReveal {
-      from {
-        opacity: 0;
-        transform: translateY(16px) scale(0.985);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      opacity: 1;
     }
 
     /* Architectural Section Dividers */
@@ -445,63 +350,28 @@
 
     .magic-ring-outer {
       transform-origin: 100px 100px;
-      animation: rotateMagic 24s linear infinite;
     }
 
     .magic-ring-inner {
       transform-origin: 100px 100px;
-      animation: rotateMagicReverse 15s linear infinite;
     }
 
-    @keyframes rotateMagic {
-      to { transform: rotate(360deg); }
-    }
-    @keyframes rotateMagicReverse {
-      to { transform: rotate(-360deg); }
-    }
-
-    /* Sonic Pulse Ring when Music Plays */
     .music-pulse-ring {
-      position: absolute;
-      inset: 14px;
-      border-radius: 50%;
-      border: 1.5px solid var(--primary);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 0;
+      display: none;
     }
 
-    .avatar-showcase.music-playing .music-pulse-ring {
-      animation: sonicRipple 2.2s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
-    }
-
-    @keyframes sonicRipple {
-      0% { transform: scale(0.92); opacity: 0.75; }
-      100% { transform: scale(1.36); opacity: 0; }
-    }
-
+    /* Pre-softened Radial Aura (Zero CSS filter:blur GPU cost) */
     .avatar-aura {
       position: absolute;
-      inset: 10px;
+      inset: -6px;
       border-radius: 50%;
-      background: conic-gradient(from 0deg, var(--primary), var(--secondary), var(--accent), var(--primary));
-      filter: blur(18px);
-      opacity: 0.58;
-      animation: rotateAura 5.5s linear infinite;
+      background: radial-gradient(circle, rgba(var(--primary-rgb), 0.5) 0%, rgba(var(--secondary-rgb), 0.25) 48%, transparent 72%);
       z-index: 0;
-      will-change: transform;
-      transition: opacity 0.25s ease;
+      pointer-events: none;
     }
 
     .avatar-showcase.music-playing .avatar-aura {
-      opacity: 0.92;
-      animation-duration: 2.4s;
-    }
-
-    @keyframes rotateAura {
-      0% { transform: rotate(0deg) scale(0.95); }
-      50% { transform: rotate(180deg) scale(1.07); }
-      100% { transform: rotate(360deg) scale(0.95); }
+      background: radial-gradient(circle, rgba(var(--primary-rgb), 0.75) 0%, rgba(var(--secondary-rgb), 0.4) 52%, transparent 75%);
     }
 
     .avatar {
@@ -512,9 +382,10 @@
       position: relative;
       z-index: 1;
       border: 2.5px solid rgba(255, 255, 255, 0.55);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), 0 0 24px rgba(var(--primary-rgb), 0.22);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7);
     }
 
+    /* APNG Frame: No CSS drop-shadow filter or transform animation so 48-frame APNG decodes with 0% shader lag */
     .avatar-border {
       position: absolute;
       top: 50%;
@@ -524,14 +395,6 @@
       transform: translate(-50%, -50%);
       pointer-events: none;
       z-index: 2;
-      will-change: transform;
-      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.5));
-      animation: floatFrame 3.8s ease-in-out infinite;
-    }
-
-    @keyframes floatFrame {
-      0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
-      50% { transform: translate(-50%, -50%) translateY(-5px); }
     }
 
     /* ===== Top Badges Row ===== */
@@ -548,18 +411,16 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      background: rgba(16, 185, 129, 0.14);
-      border: 1px solid rgba(16, 185, 129, 0.42);
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.45);
       color: #6ee7b7;
       font-size: 11px;
       font-weight: 700;
       padding: 4.5px 13px;
       border-radius: 999px;
-      box-shadow: 0 0 18px rgba(16, 185, 129, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
 
     .status-pill span.dot {
-      position: relative;
       width: 7px;
       height: 7px;
       background: #10b981;
@@ -567,23 +428,7 @@
       box-shadow: 0 0 8px #10b981;
     }
 
-    .status-pill span.dot::after {
-      content: "";
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      border: 1.5px solid #10b981;
-      animation: radarPing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
-    }
-
-    @keyframes radarPing {
-      0% { transform: scale(0.7); opacity: 0.9; }
-      100% { transform: scale(2.1); opacity: 0; }
-    }
-
     .vip-pill {
-      position: relative;
-      overflow: hidden;
       display: inline-flex;
       align-items: center;
       gap: 5px;
@@ -595,24 +440,6 @@
       padding: 4.5px 12px;
       border-radius: 999px;
       letter-spacing: 0.6px;
-      box-shadow: 0 0 18px rgba(255, 193, 7, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-
-    .vip-pill::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -120%;
-      width: 65%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-      transform: skewX(-22deg);
-      animation: pillSheen 4.2s ease-in-out infinite;
-    }
-
-    @keyframes pillSheen {
-      0%, 62% { left: -120%; }
-      100% { left: 160%; }
     }
 
     /* ===== Name & Verified Checkmark ===== */
@@ -629,16 +456,10 @@
       font-size: 29px;
       font-weight: 900;
       letter-spacing: -0.4px;
-      background: linear-gradient(95deg, #ffffff 0%, #fff2cc 24%, var(--primary) 52%, #ffffff 78%, var(--accent) 100%);
-      background-size: 220% auto;
+      background: linear-gradient(95deg, #ffffff 0%, #fff2cc 32%, var(--primary) 68%, #fff8e1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: shineName 5s linear infinite;
-      filter: drop-shadow(0 4px 16px rgba(var(--primary-rgb), 0.26));
-    }
-
-    @keyframes shineName {
-      to { background-position: 220% center; }
+      text-shadow: none;
     }
 
     .verified-badge {
@@ -648,12 +469,11 @@
       width: 26px;
       height: 26px;
       cursor: pointer;
-      filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.9));
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.2s ease;
     }
 
     .verified-badge:hover {
-      transform: scale(1.24) rotate(12deg);
+      transform: scale(1.18);
     }
 
     /* ===== Typewriter Subtitle Pill ===== */
@@ -697,28 +517,21 @@
       gap: 10px;
       margin-bottom: 6px;
       text-align: left;
+      contain: layout style;
     }
 
     .service-item {
       --svc-rgb: var(--primary-rgb);
-      --mx: 50%;
-      --my: 50%;
       display: flex;
       align-items: center;
       gap: 13px;
       padding: 12px 15px;
       border-radius: 17px;
-      background:
-        radial-gradient(240px circle at var(--mx) var(--my), rgba(var(--svc-rgb), 0.18), transparent 65%),
-        rgba(8, 10, 20, 0.28);
+      background: rgba(8, 10, 20, 0.28);
       border: 1px solid rgba(255, 255, 255, 0.16);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.12),
-        0 4px 14px rgba(0, 0, 0, 0.22);
       cursor: pointer;
-      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease, box-shadow 0.28s ease, background 0.28s ease;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
       position: relative;
-      overflow: hidden;
     }
 
     /* Signature Subtle Accent Per Service */
@@ -727,30 +540,10 @@
     .service-item.svc-ios  { --svc-rgb: 56, 189, 248; }
     .service-item.svc-pro  { --svc-rgb: 168, 85, 247; }
 
-    .service-item::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -110%;
-      width: 55%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.13), transparent);
-      transform: skewX(-22deg);
-      transition: left 0.6s ease;
-      pointer-events: none;
-    }
-
-    .service-item:hover::before {
-      left: 150%;
-    }
-
     .service-item:hover {
+      background: rgba(var(--svc-rgb), 0.15);
       border-color: rgba(var(--svc-rgb), 0.62);
-      transform: translateY(-2.5px) scale(1.01);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.18),
-        0 12px 28px rgba(0, 0, 0, 0.42),
-        0 0 24px rgba(var(--svc-rgb), 0.18);
+      transform: translateY(-2px);
     }
 
     .service-icon {
@@ -1006,6 +799,7 @@
       margin-top: 14px;
       position: relative;
       overflow: hidden;
+      contain: layout style;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 24px rgba(0, 0, 0, 0.28);
     }
 
@@ -1096,7 +890,6 @@
       border-radius: 50%;
       background: var(--primary);
       box-shadow: 0 0 8px var(--primary);
-      animation: pulseDot 1.2s infinite;
     }
 
     /* ===== Flagship Studio Music Player + Audio Visualizer ===== */
@@ -1113,6 +906,7 @@
         0 14px 34px rgba(0, 0, 0, 0.35);
       position: relative;
       overflow: hidden;
+      contain: layout style;
       transition: border-color 0.35s ease, box-shadow 0.35s ease;
     }
 
@@ -2072,33 +1866,15 @@
       .fps-badge { padding: 6px 11px; font-size: 11px; }
       .hud-btn { width: 36px; padding: 0; justify-content: center; }
 
-      /* Lighter glass blur for silky 60fps & clear video visibility on mobile */
-      :root { --glass-blur: 4px; }
       .profile-card {
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
         border-radius: 26px;
       }
       .profile-card-wrap {
         border-radius: 28px;
-        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.72);
       }
       .fps-badge, .hud-btn {
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
         background: rgba(8, 10, 18, 0.88);
       }
-      .corner-orb {
-        filter: none;
-        opacity: 0.14;
-        width: 160px;
-        height: 160px;
-        background-image: radial-gradient(circle, currentColor 0%, transparent 70%) !important;
-        background-color: transparent !important;
-      }
-      .corner-orb.top-left { color: var(--primary); }
-      .corner-orb.bottom-right { color: var(--accent); }
-      .avatar-aura { filter: blur(10px); }
 
       .avatar-showcase { margin-bottom: 10px; }
       .subtitle-wrap { font-size: 11.8px; min-height: 32px; padding: 5px 12px; }
@@ -2201,9 +1977,8 @@
   </script>
   <div class="bg-overlay"></div>
 
-  <!-- Background Particles & Interactive Click Sparkle FX Canvases -->
+    <!-- Background Particles Canvas -->
   <canvas id="particleCanvas"></canvas>
-  <canvas id="fxCanvas"></canvas>
 
   <!-- Top-Left FPS & Ping HUD -->
   <div class="hud-top-left">
@@ -2877,6 +2652,7 @@
         musicPlayerCard.classList.remove("is-playing");
         playStateText.textContent = activeEngine !== "none" ? "⏸ Đã tạm dừng" : "🎧 Chạm Play hoặc Ngẫu nhiên";
       }
+      if (typeof kickVisualizer === "function") kickVisualizer();
     }
 
     // Phones block autoplay inside the SoundCloud iframe unless the tap happens on the iframe itself.
@@ -3197,57 +2973,52 @@
         : "fa-solid fa-volume-high vol-icon";
     });
 
-    // 5. Upgraded Gradient Spectrum Visualizer with Floating Peak Caps
+    // 5. Gradient Spectrum Visualizer (Runs rAF ONLY while audio is playing — 0% CPU when paused)
     const visCanvas = document.getElementById("visualizerCanvas");
     const visCtx = visCanvas.getContext("2d");
     const barCount = 12;
     const barHeights = new Array(barCount).fill(3);
-    const barPeaks = new Array(barCount).fill(3);
     let cachedThemeColors = { primary: "#ff9d00", secondary: "#ff2a5f", accent: "#ffd166" };
+    let visRafId = null;
 
-    function drawVisualizer() {
+    function renderVisualizerFrame() {
       visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
       const barWidth = 4;
       const gap = 2.2;
-      const grad = visCtx.createLinearGradient(0, visCanvas.height, 0, 0);
-      grad.addColorStop(0, cachedThemeColors.primary);
-      grad.addColorStop(0.65, cachedThemeColors.secondary);
-      grad.addColorStop(1, cachedThemeColors.accent);
+      visCtx.fillStyle = cachedThemeColors.primary;
 
+      let anyMoving = false;
       for (let i = 0; i < barCount; i++) {
         if (isAudioPlaying) {
           const target = 4 + Math.random() * 19;
           barHeights[i] += (target - barHeights[i]) * 0.34;
+          anyMoving = true;
         } else {
-          barHeights[i] += (3 - barHeights[i]) * 0.18;
+          barHeights[i] += (3 - barHeights[i]) * 0.25;
+          if (barHeights[i] > 3.2) anyMoving = true;
+          else barHeights[i] = 3;
         }
-        if (barHeights[i] > barPeaks[i]) {
-          barPeaks[i] = barHeights[i];
-        } else {
-          barPeaks[i] = Math.max(barHeights[i], barPeaks[i] - 0.35);
-        }
-
         const h = Math.max(3, barHeights[i]);
         const x = i * (barWidth + gap) + 2;
         const y = visCanvas.height - h;
-
-        visCtx.fillStyle = grad;
-        visCtx.beginPath();
-        visCtx.roundRect(x, y, barWidth, h, 2);
-        visCtx.fill();
-
-        if (isAudioPlaying && barPeaks[i] > 5) {
-          visCtx.fillStyle = "#ffffff";
-          visCtx.globalAlpha = 0.85;
-          visCtx.fillRect(x, Math.max(0, visCanvas.height - barPeaks[i] - 2), barWidth, 1.5);
-          visCtx.globalAlpha = 1;
-        }
+        visCtx.fillRect(x, y, barWidth, h);
       }
-      requestAnimationFrame(drawVisualizer);
-    }
-    drawVisualizer();
 
-    // 6. Upgraded Cinematic Background Particle System (Organic Embers / Depth Snow / Comet Meteors)
+      if (isAudioPlaying || anyMoving) {
+        visRafId = requestAnimationFrame(renderVisualizerFrame);
+      } else {
+        visRafId = null;
+      }
+    }
+
+    function kickVisualizer() {
+      if (!visRafId) {
+        visRafId = requestAnimationFrame(renderVisualizerFrame);
+      }
+    }
+    renderVisualizerFrame();
+
+    // 6. Ultra-Light Background Particle System (Single-pass draw, pauses when tab hidden)
     const canvas = document.getElementById("particleCanvas");
     const ctx = canvas.getContext("2d");
     const modes = ["embers", "snow", "stars"];
@@ -3258,12 +3029,12 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("resize", resizeCanvas, { passive: true });
     resizeCanvas();
 
     function createParticles() {
       particles = [];
-      const count = window.matchMedia("(max-width: 700px)").matches ? 28 : 74;
+      const count = window.matchMedia("(max-width: 700px)").matches ? 14 : 26;
       for (let i = 0; i < count; i++) {
         particles.push(makeParticle());
       }
@@ -3272,227 +3043,72 @@
     function makeParticle() {
       const mode = modes[modeIndex];
       if (mode === "embers") {
-        const colors = ["#ff9d00", "#ff5500", "#ffd166", "#ff2a5f", "#fff4d6"];
+        const colors = ["#ff9d00", "#ff5500", "#ffd166", "#ff2a5f"];
         return {
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          r: 1.1 + Math.random() * 2.5,
-          vx: (Math.random() - 0.5) * 0.9,
-          vy: -(0.65 + Math.random() * 1.75),
-          phase: Math.random() * Math.PI * 2,
-          sway: 0.3 + Math.random() * 0.7,
-          alpha: 0.35 + Math.random() * 0.65,
+          r: 1.4 + Math.random() * 2.2,
+          vx: (Math.random() - 0.5) * 0.7,
+          vy: -(0.6 + Math.random() * 1.4),
+          alpha: 0.45 + Math.random() * 0.5,
           color: colors[Math.floor(Math.random() * colors.length)]
         };
       } else if (mode === "snow") {
         return {
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          r: 1.2 + Math.random() * 2.7,
-          vx: (Math.random() - 0.5) * 0.6,
-          vy: 0.7 + Math.random() * 1.5,
-          phase: Math.random() * Math.PI * 2,
-          sway: 0.4 + Math.random() * 0.8,
-          alpha: 0.3 + Math.random() * 0.65,
+          r: 1.5 + Math.random() * 2.3,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: 0.65 + Math.random() * 1.2,
+          alpha: 0.4 + Math.random() * 0.5,
           color: "#e2f5ff"
         };
       } else {
         const colors = ["#00f0ff", "#c084fc", "#fde047", "#ffffff"];
-        const isComet = Math.random() < 0.32;
         return {
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          r: isComet ? 1.5 + Math.random() * 1.6 : 1 + Math.random() * 1.6,
-          vx: isComet ? 3.2 + Math.random() * 3.4 : 0.35 + Math.random() * 0.6,
-          vy: isComet ? 1.6 + Math.random() * 1.8 : 0.2 + Math.random() * 0.4,
-          tail: isComet ? 26 + Math.random() * 32 : 0,
-          phase: Math.random() * Math.PI * 2,
-          alpha: 0.4 + Math.random() * 0.6,
+          r: 1.3 + Math.random() * 2,
+          vx: 1.5 + Math.random() * 2.2,
+          vy: 0.75 + Math.random() * 1.2,
+          alpha: 0.45 + Math.random() * 0.5,
           color: colors[Math.floor(Math.random() * colors.length)]
         };
       }
     }
 
-    function animateParticles(ts) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const mode = modes[modeIndex];
-      const t = ts * 0.002;
-
-      for (let p of particles) {
-        if (mode === "embers" || mode === "snow") {
-          p.x += p.vx + Math.sin(t + p.phase) * p.sway * 0.35;
-          p.y += p.vy;
-        } else {
+    function animateParticles() {
+      if (!document.hidden) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const mode = modes[modeIndex];
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
           p.x += p.vx;
           p.y += p.vy;
-        }
 
-        if (mode === "embers" && p.y < -12) {
-          p.y = canvas.height + 12;
-          p.x = Math.random() * canvas.width;
-        } else if (mode !== "embers") {
-          if (p.y > canvas.height + 16) {
-            p.y = -16;
+          if (mode === "embers" && p.y < -10) {
+            p.y = canvas.height + 10;
             p.x = Math.random() * canvas.width;
+          } else if (mode !== "embers") {
+            if (p.y > canvas.height + 10) {
+              p.y = -10;
+              p.x = Math.random() * canvas.width;
+            }
+            if (p.x > canvas.width + 10) p.x = -10;
           }
-          if (p.x > canvas.width + 40) {
-            p.x = -20;
-            p.y = Math.random() * canvas.height * 0.85;
-          } else if (p.x < -20) {
-            p.x = canvas.width + 12;
-          }
-        }
 
-        const flicker = mode === "embers" ? 0.72 + Math.sin(t * 3 + p.phase) * 0.28 : 1;
-        const a = p.alpha * flicker;
-
-        if (mode === "stars" && p.tail > 0) {
-          const tailGrad = ctx.createLinearGradient(p.x, p.y, p.x - p.vx * 6, p.y - p.vy * 6);
-          tailGrad.addColorStop(0, p.color);
-          tailGrad.addColorStop(1, "transparent");
-          ctx.strokeStyle = tailGrad;
-          ctx.globalAlpha = a * 0.75;
-          ctx.lineWidth = p.r * 1.1;
-          ctx.lineCap = "round";
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
           ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x - p.vx * 6, p.y - p.vy * 6);
-          ctx.stroke();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
         }
-
-        // Fast GPU-friendly glow halo
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = a * 0.22;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 2.4, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.globalAlpha = a;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.globalAlpha = 1;
       }
-      ctx.globalAlpha = 1;
       requestAnimationFrame(animateParticles);
     }
     createParticles();
     requestAnimationFrame(animateParticles);
-
-    // 7. Interactive Click Sparkle Burst FX (Zero idle CPU — runs only when sparks exist)
-    const fxCanvas = document.getElementById("fxCanvas");
-    const fxCtx = fxCanvas.getContext("2d");
-    let sparks = [];
-    let fxRunning = false;
-
-    function resizeFxCanvas() {
-      fxCanvas.width = window.innerWidth;
-      fxCanvas.height = window.innerHeight;
-    }
-    window.addEventListener("resize", resizeFxCanvas);
-    resizeFxCanvas();
-
-    function spawnClickSparks(x, y, count = 12) {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      const palette = [cachedThemeColors.primary, cachedThemeColors.secondary, cachedThemeColors.accent, "#ffffff"];
-      for (let i = 0; i < count; i++) {
-        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
-        const speed = 1.6 + Math.random() * 3.4;
-        sparks.push({
-          x,
-          y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          r: 1.5 + Math.random() * 2.1,
-          life: 1,
-          decay: 0.025 + Math.random() * 0.022,
-          color: palette[Math.floor(Math.random() * palette.length)]
-        });
-      }
-      if (!fxRunning) {
-        fxRunning = true;
-        requestAnimationFrame(animateFx);
-      }
-    }
-
-    function animateFx() {
-      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
-      for (let i = sparks.length - 1; i >= 0; i--) {
-        const s = sparks[i];
-        s.x += s.vx;
-        s.y += s.vy;
-        s.vx *= 0.96;
-        s.vy = s.vy * 0.96 + 0.05;
-        s.life -= s.decay;
-        if (s.life <= 0) {
-          sparks.splice(i, 1);
-          continue;
-        }
-        fxCtx.globalAlpha = s.life;
-        fxCtx.fillStyle = s.color;
-        fxCtx.beginPath();
-        fxCtx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2);
-        fxCtx.fill();
-      }
-      fxCtx.globalAlpha = 1;
-      if (sparks.length > 0) {
-        requestAnimationFrame(animateFx);
-      } else {
-        fxRunning = false;
-      }
-    }
-
-    document.addEventListener("pointerdown", (e) => {
-      if (e.target.closest("select, input")) return;
-      spawnClickSparks(e.clientX, e.clientY, window.matchMedia("(max-width: 700px)").matches ? 8 : 13);
-    });
-
-    // 8. Desktop Subtle 3D Tilt & Mouse-Follow Specular Spotlight (Disabled on touch devices)
-    const isDesktopPointer = window.matchMedia("(pointer: fine) and (hover: hover)").matches;
-    const cardWrap = document.getElementById("cardWrap");
-    const profileCard = document.getElementById("profileCard");
-
-    if (isDesktopPointer && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      let tiltRaf = null;
-      let targetRx = 0, targetRy = 0;
-
-      cardWrap.addEventListener("pointermove", (e) => {
-        const rect = cardWrap.getBoundingClientRect();
-        const relX = (e.clientX - rect.left) / rect.width;
-        const relY = (e.clientY - rect.top) / rect.height;
-
-        profileCard.style.setProperty("--card-mx", `${(relX * 100).toFixed(1)}%`);
-        profileCard.style.setProperty("--card-my", `${(relY * 100).toFixed(1)}%`);
-
-        // Keep tilt super refined & gentle so form controls stay effortless to click
-        if (e.target.closest("select, input, iframe")) {
-          targetRx = 0;
-          targetRy = 0;
-        } else {
-          targetRy = (relX - 0.5) * 4.5;
-          targetRx = (0.5 - relY) * 3.5;
-        }
-
-        if (!tiltRaf) {
-          tiltRaf = requestAnimationFrame(() => {
-            cardWrap.style.transform = `perspective(1400px) rotateX(${targetRx.toFixed(2)}deg) rotateY(${targetRy.toFixed(2)}deg)`;
-            tiltRaf = null;
-          });
-        }
-      });
-
-      cardWrap.addEventListener("pointerleave", () => {
-        cardWrap.style.transform = "perspective(1400px) rotateX(0deg) rotateY(0deg)";
-      });
-
-      // Individual Service Item Spotlight Sheen
-      document.querySelectorAll(".service-item").forEach((item) => {
-        item.addEventListener("pointermove", (e) => {
-          const r = item.getBoundingClientRect();
-          item.style.setProperty("--mx", `${e.clientX - r.left}px`);
-          item.style.setProperty("--my", `${e.clientY - r.top}px`);
-        });
-      });
-    }
 
     // 9. Theme Switcher & HUD Buttons (5 Curated Themes)
     const themes = [
