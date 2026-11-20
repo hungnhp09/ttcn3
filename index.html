@@ -19,13 +19,13 @@
       --secondary-rgb: 255, 42, 95;
       --accent: #ffd166;
       --accent-rgb: 255, 209, 102;
-      --card-bg: rgba(9, 10, 18, 0.72);
+      --card-bg: rgba(8, 10, 18, 0.22);
       --card-surface: rgba(255, 255, 255, 0.045);
-      --card-border: rgba(255, 255, 255, 0.14);
+      --card-border: rgba(255, 255, 255, 0.18);
       --text-main: #f8fafc;
-      --text-dim: rgba(226, 232, 240, 0.72);
-      --text-muted: rgba(148, 163, 184, 0.75);
-      --glass-blur: 24px;
+      --text-dim: rgba(241, 245, 249, 0.85);
+      --text-muted: rgba(203, 213, 225, 0.82);
+      --glass-blur: 5px;
       --card-mx: 50%;
       --card-my: 20%;
     }
@@ -116,12 +116,12 @@
       object-position: center center;
       z-index: -4;
       pointer-events: none;
-      filter: saturate(1.22) contrast(1.08) brightness(0.92);
+      filter: saturate(1.22) contrast(1.06) brightness(1);
       transition: filter 0.5s ease;
     }
 
     body.clear-mode #bgVideo {
-      filter: saturate(1.25) contrast(1.08) brightness(1);
+      filter: saturate(1.25) contrast(1.08) brightness(1.03);
     }
 
     .bg-overlay {
@@ -129,8 +129,7 @@
       inset: 0;
       z-index: -3;
       background:
-        radial-gradient(circle at 50% 25%, rgba(var(--primary-rgb), 0.08) 0%, transparent 55%),
-        radial-gradient(circle at 50% 50%, rgba(5, 6, 12, 0.14) 0%, rgba(4, 5, 10, 0.58) 100%);
+        radial-gradient(circle at 50% 50%, rgba(4, 5, 10, 0.04) 0%, rgba(4, 5, 10, 0.24) 100%);
       pointer-events: none;
       transition: opacity 0.45s ease;
     }
@@ -257,42 +256,52 @@
       transform: rotate(18deg) scale(1.15);
     }
 
-    /* ===== Main Profile Card with Luxury Obsidian Glass & Conic Beam ===== */
+    /* ===== Main Profile Card with Crystal-Clear Transparent Glass & Masked Conic Border Beam ===== */
     .profile-card-wrap {
       position: relative;
       width: 100%;
       max-width: 610px;
       border-radius: 34px;
-      padding: 1.8px;
-      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.65), rgba(255, 255, 255, 0.12), rgba(var(--accent-rgb), 0.55));
+      padding: 0;
+      background: transparent;
       box-shadow:
-        0 32px 90px rgba(0, 0, 0, 0.82),
-        0 0 65px rgba(var(--primary-rgb), 0.16),
-        0 0 0 1px rgba(255, 255, 255, 0.05);
+        0 24px 70px rgba(0, 0, 0, 0.65),
+        0 0 45px rgba(var(--primary-rgb), 0.14);
       transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
       transform-style: preserve-3d;
       will-change: transform;
       z-index: 10;
-      overflow: hidden;
     }
 
-    /* Spinning Conic Neon Beam inside Wrapper */
-    .profile-card-wrap::before {
+    /* Masked 2px Border Ring so spinning conic beam NEVER blocks the transparent card center */
+    .card-border-beam {
+      position: absolute;
+      inset: 0;
+      border-radius: 32px;
+      padding: 2px;
+      pointer-events: none;
+      z-index: 4;
+      overflow: hidden;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .card-border-beam::before {
       content: "";
       position: absolute;
       inset: -65%;
       background: conic-gradient(
         from 0deg,
-        transparent 0deg,
+        rgba(255, 255, 255, 0.22) 0deg,
         var(--primary) 65deg,
         var(--secondary) 130deg,
-        transparent 175deg,
+        rgba(255, 255, 255, 0.22) 180deg,
         var(--accent) 255deg,
         var(--primary) 325deg,
-        transparent 360deg
+        rgba(255, 255, 255, 0.22) 360deg
       );
       animation: spinBorderBeam 6s linear infinite;
-      z-index: 0;
     }
 
     @keyframes spinBorderBeam {
@@ -303,33 +312,26 @@
       position: relative;
       width: 100%;
       background:
-        radial-gradient(560px circle at var(--card-mx) var(--card-my), rgba(var(--primary-rgb), 0.095), transparent 46%),
-        radial-gradient(ellipse 85% 32% at 50% 0%, rgba(var(--primary-rgb), 0.16), transparent 68%),
-        linear-gradient(180deg, rgba(16, 18, 30, 0.8) 0%, var(--card-bg) 38%, rgba(8, 9, 16, 0.84) 100%);
-      backdrop-filter: blur(var(--glass-blur)) saturate(175%);
-      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(175%);
+        radial-gradient(500px circle at var(--card-mx) var(--card-my), rgba(var(--primary-rgb), 0.08), transparent 45%),
+        var(--card-bg);
+      backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
       border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       padding: 38px 30px 26px;
       text-align: center;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.82);
       z-index: 1;
       overflow: hidden;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.22),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.08);
       transition: background 0.4s ease, backdrop-filter 0.4s ease;
     }
 
     /* Subtle Fine Luxury Micro-Grain Texture */
     .profile-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-      background-size: 22px 22px;
-      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.15) 60%, transparent 100%);
-      -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.15) 60%, transparent 100%);
-      pointer-events: none;
-      z-index: 0;
+      display: none;
     }
 
     /* Precision Tech Corner Brackets */
@@ -347,35 +349,16 @@
     .card-corner.bl { bottom: 14px; left: 14px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); border-bottom-left-radius: 6px; }
     .card-corner.br { bottom: 14px; right: 14px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); border-bottom-right-radius: 6px; }
 
-    /* Refined Ambient Edge Orbs (clean, never muddy) */
+    /* Refined Ambient Edge Orbs (hidden so background video stays 100% crystal clear) */
     .corner-orb {
-      position: absolute;
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      filter: blur(75px);
-      opacity: 0.15;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .corner-orb.top-left {
-      top: -115px;
-      left: -95px;
-      background: var(--primary);
-    }
-    .corner-orb.bottom-right {
-      bottom: -115px;
-      right: -95px;
-      background: var(--accent);
+      display: none;
     }
 
-    /* Clear Mode (Crystal Translucent) */
+    /* Clear Mode (Ultra Crystal Translucent) */
     body.clear-mode .profile-card {
-      background:
-        radial-gradient(ellipse 80% 30% at 50% 0%, rgba(var(--primary-rgb), 0.1), transparent 70%),
-        rgba(8, 9, 16, 0.28);
-      backdrop-filter: blur(7px) saturate(135%);
-      -webkit-backdrop-filter: blur(7px) saturate(135%);
+      background: rgba(6, 8, 14, 0.1);
+      backdrop-filter: blur(1.5px);
+      -webkit-backdrop-filter: blur(1.5px);
     }
 
     .card-content {
@@ -726,12 +709,12 @@
       padding: 12px 15px;
       border-radius: 17px;
       background:
-        radial-gradient(240px circle at var(--mx) var(--my), rgba(var(--svc-rgb), 0.16), transparent 65%),
-        linear-gradient(135deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.025));
-      border: 1px solid rgba(255, 255, 255, 0.11);
+        radial-gradient(240px circle at var(--mx) var(--my), rgba(var(--svc-rgb), 0.18), transparent 65%),
+        rgba(8, 10, 20, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.09),
-        0 4px 14px rgba(0, 0, 0, 0.25);
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 4px 14px rgba(0, 0, 0, 0.22);
       cursor: pointer;
       transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease, box-shadow 0.28s ease, background 0.28s ease;
       position: relative;
@@ -1016,14 +999,14 @@
 
     /* ===== Precision Live Uptime Chronograph ===== */
     .uptime-box {
-      background: linear-gradient(180deg, rgba(14, 16, 28, 0.72), rgba(7, 8, 15, 0.62));
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(8, 10, 20, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 20px;
       padding: 14px 16px 13px;
       margin-top: 14px;
       position: relative;
       overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 24px rgba(0, 0, 0, 0.34);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 24px rgba(0, 0, 0, 0.28);
     }
 
     .uptime-label {
@@ -1118,8 +1101,8 @@
 
     /* ===== Flagship Studio Music Player + Audio Visualizer ===== */
     .music-player {
-      background: linear-gradient(180deg, rgba(15, 18, 32, 0.86), rgba(9, 11, 20, 0.88));
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(8, 10, 20, 0.34);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 22px;
       padding: 16px;
       display: flex;
@@ -1127,7 +1110,7 @@
       gap: 12px;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.14),
-        0 14px 34px rgba(0, 0, 0, 0.48);
+        0 14px 34px rgba(0, 0, 0, 0.35);
       position: relative;
       overflow: hidden;
       transition: border-color 0.35s ease, box-shadow 0.35s ease;
@@ -1588,15 +1571,15 @@
     /* ===== Luxury VIP MB Bank VietQR Payment Card ===== */
     .bank-qr-box {
       background:
-        radial-gradient(circle at 100% 0%, rgba(var(--primary-rgb), 0.12), transparent 52%),
-        linear-gradient(145deg, rgba(16, 18, 32, 0.84), rgba(8, 10, 18, 0.86));
-      border: 1px solid rgba(255, 255, 255, 0.14);
+        radial-gradient(circle at 100% 0%, rgba(var(--primary-rgb), 0.14), transparent 55%),
+        rgba(8, 10, 20, 0.34);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 22px;
       padding: 18px;
       text-align: center;
       position: relative;
       overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 12px 32px rgba(0, 0, 0, 0.45);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 12px 32px rgba(0, 0, 0, 0.35);
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -1773,6 +1756,14 @@
       font-size: 17px;
       letter-spacing: 1px;
       text-shadow: 0 0 14px rgba(var(--primary-rgb), 0.35);
+    }
+
+    .bank-info-val.thank-note {
+      color: #fde68a;
+      font-size: 12.2px;
+      font-weight: 700;
+      line-height: 1.4;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
     }
 
     .mb-chip {
@@ -2125,11 +2116,11 @@
       .fps-badge { padding: 6px 11px; font-size: 11px; }
       .hud-btn { width: 36px; padding: 0; justify-content: center; }
 
-      /* Lighter glass blur for silky 60fps over live mobile video */
-      :root { --glass-blur: 11px; }
+      /* Lighter glass blur for silky 60fps & clear video visibility on mobile */
+      :root { --glass-blur: 4px; }
       .profile-card {
-        backdrop-filter: blur(11px);
-        -webkit-backdrop-filter: blur(11px);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
         border-radius: 26px;
       }
       .profile-card-wrap {
@@ -2286,6 +2277,7 @@
   <!-- Main 3D Obsidian Glass Profile Card with Spinning Neon Border -->
   <div class="profile-card-wrap" id="cardWrap">
     <main class="profile-card" id="profileCard">
+      <div class="card-border-beam"></div>
       <div class="card-corner tl"></div>
       <div class="card-corner tr"></div>
       <div class="card-corner bl"></div>
@@ -2632,6 +2624,12 @@
                   <span class="bank-info-label">Chủ tài khoản</span>
                   <span class="bank-info-val">NGUYEN HOANG PHU HUNG</span>
                 </div>
+                <div class="bank-info-row">
+                  <span class="bank-info-label">Nội dung chuyển khoản</span>
+                  <span class="bank-info-val thank-note">
+                    <i class="fa-solid fa-heart" style="color: #ff2a5f;"></i> Cảm ơn vì bạn đã chuyển khoản đến tôi
+                  </span>
+                </div>
               </div>
 
               <div class="bank-actions">
@@ -2689,7 +2687,10 @@
       <img src="mbbank_qr.jpg" alt="VietQR MB Bank Phóng To" class="qr-lightbox-img">
       <div class="modal-desc" style="margin-bottom: 14px;">
         <strong style="color: #fff;">MB BANK</strong> • <strong style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">0921651899</strong><br>
-        NGUYEN HOANG PHU HUNG
+        NGUYEN HOANG PHU HUNG<br>
+        <span style="color: #fde68a; font-weight: 700; font-size: 12.3px; display: inline-block; margin-top: 6px;">
+          <i class="fa-solid fa-heart" style="color: #ff2a5f;"></i> Nội dung CK: Cảm ơn vì bạn đã chuyển khoản đến tôi
+        </span>
       </div>
       <div class="modal-actions">
         <button type="button" class="copy-stk-btn" id="copyStkModalBtn" style="width: 100%; padding: 12px;">
