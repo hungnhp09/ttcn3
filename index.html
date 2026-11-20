@@ -1626,54 +1626,37 @@
     }
 
     .bank-qr-content {
-      display: grid;
-      grid-template-columns: 185px 1fr;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 15px;
       text-align: left;
     }
 
-    /* Animated Scanner Frame around VietQR */
+    /* Large Unobstructed Frame around VietQR for Instant Camera Scanning */
     .bank-qr-frame {
       position: relative;
-      padding: 7px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.35), rgba(255, 255, 255, 0.08), rgba(var(--accent-rgb), 0.3));
+      max-width: 310px;
+      width: 100%;
+      padding: 8px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.45), rgba(255, 255, 255, 0.14), rgba(var(--accent-rgb), 0.38));
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.48), 0 0 24px rgba(var(--primary-rgb), 0.2);
       cursor: zoom-in;
       transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease;
     }
 
     .bank-qr-frame:hover {
-      transform: scale(1.03);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 22px rgba(var(--primary-rgb), 0.28);
+      transform: scale(1.02);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 28px rgba(var(--primary-rgb), 0.32);
     }
 
     .bank-qr-img-wrap {
       position: relative;
       background: #ffffff;
-      padding: 6px;
-      border-radius: 13px;
+      padding: 10px;
+      border-radius: 14px;
       overflow: hidden;
-    }
-
-    /* Animated Subtle Laser Scan Beam */
-    .qr-scan-line {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--primary), #fff, var(--primary), transparent);
-      box-shadow: 0 0 10px var(--primary), 0 0 18px rgba(var(--primary-rgb), 0.8);
-      opacity: 0.72;
-      animation: qrScan 3.4s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes qrScan {
-      0%, 100% { top: 8%; opacity: 0.2; }
-      15% { opacity: 0.85; }
-      50% { top: 88%; opacity: 0.85; }
-      85% { opacity: 0.85; }
     }
 
     .bank-qr-img {
@@ -1683,24 +1666,8 @@
       border-radius: 8px;
     }
 
-    .bank-qr-zoom-hint {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      width: 24px;
-      height: 24px;
-      border-radius: 8px;
-      background: rgba(8, 10, 18, 0.82);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10.5px;
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
     .bank-details-col {
+      width: 100%;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -1711,19 +1678,21 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.09);
+      gap: 9px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 15px;
-      padding: 12px 14px;
+      padding: 13px 15px;
     }
 
     .bank-info-row {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
-      padding-bottom: 7px;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
     }
 
     .bank-info-row:last-child {
@@ -2047,22 +2016,9 @@
 
     /* ===== Responsive Adjustments ===== */
     @media (max-width: 580px) {
-      .bank-qr-content {
-        grid-template-columns: 1fr;
-        justify-items: center;
-        text-align: center;
-      }
       .bank-qr-frame {
-        max-width: 220px;
+        max-width: 285px;
         width: 100%;
-      }
-      .bank-details-col {
-        width: 100%;
-      }
-      .bank-info-row {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
       }
       .bank-info-val {
         justify-content: flex-end;
@@ -2601,8 +2557,6 @@
             <div class="bank-qr-frame" id="qrZoomTrigger" title="Bấm để phóng to mã QR">
               <div class="bank-qr-img-wrap">
                 <img src="mbbank_qr.jpg?v=20261120" alt="VietQR MB Bank - NGUYEN HOANG PHU HUNG - 0921651899" class="bank-qr-img" loading="lazy">
-                <div class="qr-scan-line"></div>
-                <span class="bank-qr-zoom-hint"><i class="fa-solid fa-expand"></i></span>
               </div>
             </div>
 
