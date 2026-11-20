@@ -1999,10 +1999,6 @@
       <i class="fa-solid fa-fire-flame-curved"></i>
       <span id="particleModeText">Hạt: Lửa</span>
     </button>
-    <button class="hud-btn" id="glassModeBtn" title="Chuyển đổi khung kính trong suốt">
-      <i class="fa-solid fa-wand-magic-sparkles"></i>
-      <span id="glassModeText">Khung Kính</span>
-    </button>
   </div>
 
   <!-- Main 3D Obsidian Glass Profile Card with Spinning Neon Border -->
@@ -3141,14 +3137,6 @@
       particleModeText.textContent = modeLabels[modeIndex];
       particleModeBtn.querySelector("i").className = modeIcons[modeIndex];
       createParticles();
-    });
-
-    const glassModeBtn = document.getElementById("glassModeBtn");
-    const glassModeText = document.getElementById("glassModeText");
-    glassModeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("clear-mode");
-      const isClear = document.body.classList.contains("clear-mode");
-      glassModeText.textContent = isClear ? "Trong Suốt" : "Khung Kính";
     });
 
     // 10. Verified Badge Click Toast
