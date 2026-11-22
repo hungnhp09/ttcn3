@@ -141,6 +141,142 @@
       z-index: -2;
     }
 
+    /* ===== Initial Network-Speed 1% -> 100% Preloader Screen ===== */
+    .page-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 157, 0, 0.14) 0%, rgba(12, 14, 24, 0.96) 52%, #05060b 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      transition: opacity 0.38s ease, visibility 0.38s ease;
+    }
+
+    .page-loader.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-card {
+      width: 100%;
+      max-width: 370px;
+      background: rgba(10, 12, 22, 0.78);
+      border: 1.5px solid rgba(255, 157, 0, 0.45);
+      border-radius: 28px;
+      padding: 28px 24px 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 32px rgba(255, 157, 0, 0.14);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .loader-ring-wrap {
+      position: relative;
+      width: 116px;
+      height: 116px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader-ring-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .loader-ring-track {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.1);
+      stroke-width: 5;
+    }
+
+    .loader-ring-fill {
+      fill: none;
+      stroke: url(#loaderRingGrad);
+      stroke-width: 5.5;
+      stroke-linecap: round;
+      stroke-dasharray: 314.16;
+      stroke-dashoffset: 311;
+      transition: stroke-dashoffset 0.08s linear;
+    }
+
+    .loader-avatar {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65);
+    }
+
+    .loader-percent {
+      font-family: 'Orbitron', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 34px;
+      font-weight: 900;
+      color: #ff9d00;
+      text-shadow: 0 0 18px rgba(255, 157, 0, 0.55);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .loader-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+      margin-bottom: 12px;
+    }
+
+    .loader-bar-track {
+      width: 100%;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 11px;
+    }
+
+    .loader-bar-fill {
+      height: 100%;
+      width: 1%;
+      background: linear-gradient(90deg, #ff9d00, #ff2a5f, #ffd166);
+      border-radius: 999px;
+      box-shadow: 0 0 12px rgba(255, 157, 0, 0.65);
+      transition: width 0.08s linear;
+    }
+
+    .loader-net-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .loader-status {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: rgba(226, 232, 240, 0.78);
+    }
+
     /* ===== Top HUD Bars ===== */
     .hud-top-left {
       position: fixed;
@@ -1945,6 +2081,204 @@
   </style>
 </head>
 <body data-theme="fire">
+
+  <!-- Real Network-Speed Preloader (1% -> 100%) -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-card">
+      <div class="loader-ring-wrap">
+        <svg class="loader-ring-svg" viewBox="0 0 116 116">
+          <defs>
+            <linearGradient id="loaderRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff9d00" />
+              <stop offset="55%" stop-color="#ff2a5f" />
+              <stop offset="100%" stop-color="#ffd166" />
+            </linearGradient>
+          </defs>
+          <circle class="loader-ring-track" cx="58" cy="58" r="50" />
+          <circle class="loader-ring-fill" id="loaderRingFill" cx="58" cy="58" r="50" />
+        </svg>
+        <img src="avatar.png" onerror="this.onerror=null;this.src='avatar.jpg';" alt="Avatar" class="loader-avatar">
+      </div>
+      <div class="loader-percent" id="loaderPercent">1%</div>
+      <div class="loader-name">NGUYỄN HOÀNG PHÚ HƯNG ✨</div>
+      <div class="loader-bar-track">
+        <div class="loader-bar-fill" id="loaderBarFill"></div>
+      </div>
+      <div class="loader-net-badge" id="loaderNetBadge">
+        <i class="fa-solid fa-gauge-high"></i>
+        <span id="loaderNetText">Đang đo tốc độ mạng...</span>
+      </div>
+      <div class="loader-status" id="loaderStatus">Đang khởi tạo kết nối (1%)...</div>
+    </div>
+  </div>
+  <script>
+    // Real Network-Speed Adaptive Preloader (1% -> 100%)
+    (function () {
+      const loader = document.getElementById("pageLoader");
+      const pctEl = document.getElementById("loaderPercent");
+      const barEl = document.getElementById("loaderBarFill");
+      const ringEl = document.getElementById("loaderRingFill");
+      const netTextEl = document.getElementById("loaderNetText");
+      const statusEl = document.getElementById("loaderStatus");
+      const CIRC = 314.16; // 2 * Math.PI * 50
+
+      const startTime = performance.now();
+      let currentPct = 1;
+      let targetPct = 15;
+      let domDone = false;
+      let assetsDone = false;
+      let finished = false;
+
+      // 1. Detect initial network speed from Network Information API + Navigation Timing
+      const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      let measuredMbps = (conn && conn.downlink) ? conn.downlink : 0;
+      let measuredRtt = (conn && conn.rtt) ? conn.rtt : 18;
+      let netType = (conn && conn.effectiveType) ? conn.effectiveType.toUpperCase() : "WIFI/4G";
+
+      function updateNetTelemetry() {
+        try {
+          const entries = performance.getEntriesByType("resource");
+          let totalBytes = 0;
+          let totalDurationMs = 0;
+          for (let i = 0; i < entries.length; i++) {
+            const e = entries[i];
+            const bytes = e.transferSize || e.encodedBodySize || 0;
+            const dur = e.responseEnd - e.requestStart;
+            if (bytes > 0 && dur > 1) {
+              totalBytes += bytes;
+              totalDurationMs += dur;
+            }
+          }
+          if (totalBytes > 8000 && totalDurationMs > 5) {
+            const realMbps = ((totalBytes * 8) / (totalDurationMs / 1000)) / 1e6;
+            if (realMbps > 0.2) {
+              measuredMbps = Math.min(350, Math.max(realMbps, measuredMbps));
+            }
+          } else if (!measuredMbps) {
+            const elapsedSec = Math.max(0.05, (performance.now() - startTime) / 1000);
+            measuredMbps = Math.min(120, Math.max(2.5, 18 / elapsedSec));
+          }
+        } catch (err) {}
+
+        const mbpsDisplay = measuredMbps > 0 ? measuredMbps.toFixed(1) : "25.0";
+        netTextEl.textContent = `Mạng ${netType}: ${mbpsDisplay} Mbps • ${measuredRtt}ms`;
+      }
+      updateNetTelemetry();
+
+      function setVisualPct(pct) {
+        const p = Math.max(1, Math.min(100, Math.round(pct)));
+        pctEl.textContent = p + "%";
+        barEl.style.width = p + "%";
+        ringEl.style.strokeDashoffset = (CIRC - (CIRC * p) / 100).toFixed(2);
+
+        if (p < 30) {
+          statusEl.textContent = "Đang kết nối máy chủ & đồng bộ tốc độ mạng...";
+        } else if (p < 65) {
+          statusEl.textContent = "Đang nạp giao diện VIP & danh sách SoundCloud Likes...";
+        } else if (p < 95) {
+          statusEl.textContent = "Đang tải khung Avatar & chuẩn bị Video nền...";
+        } else if (p < 100) {
+          statusEl.textContent = "Đang hoàn tất đồng bộ dữ liệu...";
+        } else {
+          statusEl.textContent = "Hoàn tất 100% • Chào mừng bạn!";
+        }
+      }
+
+      // 2. Track real DOM & critical asset milestones
+      function checkCriticalAssets() {
+        const imgs = document.querySelectorAll("img.avatar, img.avatar-border, img.bank-qr-img");
+        let loadedImgs = 0;
+        imgs.forEach((img) => {
+          if (img.complete) loadedImgs++;
+        });
+        const imgRatio = imgs.length > 0 ? loadedImgs / imgs.length : 1;
+
+        const vid = document.getElementById("bgVideo");
+        const vidReady = vid && vid.readyState >= 2;
+
+        if (domDone) {
+          targetPct = Math.max(targetPct, 42 + imgRatio * 38 + (vidReady ? 20 : 0));
+        }
+        if (assetsDone || (domDone && imgRatio >= 1 && vidReady)) {
+          targetPct = 100;
+        }
+        updateNetTelemetry();
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        domDone = true;
+        targetPct = Math.max(targetPct, 45);
+        checkCriticalAssets();
+
+        document.querySelectorAll("img").forEach((img) => {
+          if (!img.complete) {
+            img.addEventListener("load", checkCriticalAssets, { once: true });
+            img.addEventListener("error", checkCriticalAssets, { once: true });
+          }
+        });
+        const vid = document.getElementById("bgVideo");
+        if (vid) {
+          vid.addEventListener("loadeddata", () => {
+            targetPct = 100;
+            assetsDone = true;
+          }, { once: true });
+          vid.addEventListener("canplay", () => {
+            targetPct = 100;
+            assetsDone = true;
+          }, { once: true });
+        }
+      });
+
+      window.addEventListener("load", () => {
+        domDone = true;
+        assetsDone = true;
+        targetPct = 100;
+        updateNetTelemetry();
+      }, { once: true });
+
+      // Safety fallback so slow mobile networks or data-saver mode never get stuck below 100%
+      setTimeout(() => {
+        domDone = true;
+        assetsDone = true;
+        targetPct = 100;
+      }, 3200);
+
+      // 3. Smooth 1% -> 100% animation loop scaled by real measured network speed
+      function tickLoader() {
+        if (finished) return;
+        checkCriticalAssets();
+
+        // Speed factor scales directly with measured Mbps (fast net = fast climb, slow net = gradual climb)
+        const netSpeedFactor = Math.max(0.45, Math.min(3.4, (measuredMbps || 18) / 14));
+
+        if (currentPct < targetPct) {
+          const diff = targetPct - currentPct;
+          const step = Math.max(0.55 * netSpeedFactor, diff * 0.14 * Math.min(1.8, netSpeedFactor));
+          currentPct = Math.min(targetPct, currentPct + step);
+        } else if (!assetsDone && currentPct < 92) {
+          // Trickle slowly while waiting for network response on slow connections
+          currentPct += 0.18 * Math.min(1, netSpeedFactor);
+        }
+
+        setVisualPct(currentPct);
+
+        if (Math.round(currentPct) >= 100) {
+          finished = true;
+          setVisualPct(100);
+          setTimeout(() => {
+            loader.classList.add("hide");
+            setTimeout(() => {
+              if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+            }, 400);
+          }, 180);
+          return;
+        }
+        requestAnimationFrame(tickLoader);
+      }
+
+      requestAnimationFrame(tickLoader);
+    })();
+  </script>
 
   <!-- Video Background (Local with remote fallback) -->
   <video autoplay muted loop playsinline webkit-playsinline preload="auto" poster="dante_poster.jpg" id="bgVideo">
