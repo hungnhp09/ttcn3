@@ -256,25 +256,65 @@
       transition: width 0.08s linear;
     }
 
+    .loader-telemetry {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 9px;
+      width: 100%;
+    }
+
+    .loader-conn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4.5px 12px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.48);
+      color: #6ee7b7;
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    .loader-conn-pill.is-wifi {
+      background: rgba(6, 182, 212, 0.16);
+      border-color: rgba(34, 211, 238, 0.52);
+      color: #67e8f9;
+    }
+
+    .loader-conn-pill.is-cellular {
+      background: rgba(255, 157, 0, 0.18);
+      border-color: rgba(255, 157, 0, 0.55);
+      color: #fde047;
+    }
+
     .loader-net-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 12px;
+      padding: 4.5px 11px;
       border-radius: 999px;
-      background: rgba(16, 185, 129, 0.14);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #6ee7b7;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #f1f5f9;
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 700;
-      margin-bottom: 7px;
+    }
+
+    .loader-net-badge i {
+      color: #ff9d00;
     }
 
     .loader-status {
       font-size: 11.5px;
       font-weight: 600;
-      color: rgba(226, 232, 240, 0.78);
+      color: rgba(226, 232, 240, 0.8);
     }
 
     /* ===== Top HUD Bars ===== */
@@ -2104,20 +2144,29 @@
       <div class="loader-bar-track">
         <div class="loader-bar-fill" id="loaderBarFill"></div>
       </div>
-      <div class="loader-net-badge" id="loaderNetBadge">
-        <i class="fa-solid fa-gauge-high"></i>
-        <span id="loaderNetText">Đang đo tốc độ mạng...</span>
+      <div class="loader-telemetry">
+        <div class="loader-conn-pill is-wifi" id="loaderConnPill">
+          <i class="fa-solid fa-wifi" id="loaderConnIcon"></i>
+          <span id="loaderConnLabel">Đang nhận diện mạng...</span>
+        </div>
+        <div class="loader-net-badge" id="loaderNetBadge">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span id="loaderNetText">-- Mbps • --ms</span>
+        </div>
       </div>
       <div class="loader-status" id="loaderStatus">Đang khởi tạo kết nối (1%)...</div>
     </div>
   </div>
   <script>
-    // Real Network-Speed Adaptive Preloader (1% -> 100%)
+    // Real Network-Speed & Auto Wi-Fi / 4G-5G Detection Preloader (1% -> 100%)
     (function () {
       const loader = document.getElementById("pageLoader");
       const pctEl = document.getElementById("loaderPercent");
       const barEl = document.getElementById("loaderBarFill");
       const ringEl = document.getElementById("loaderRingFill");
+      const connPillEl = document.getElementById("loaderConnPill");
+      const connIconEl = document.getElementById("loaderConnIcon");
+      const connLabelEl = document.getElementById("loaderConnLabel");
       const netTextEl = document.getElementById("loaderNetText");
       const statusEl = document.getElementById("loaderStatus");
       const CIRC = 314.16; // 2 * Math.PI * 50
@@ -2129,11 +2178,143 @@
       let assetsDone = false;
       let finished = false;
 
-      // 1. Detect initial network speed from Network Information API + Navigation Timing
+      // Detect whether device is mobile/tablet vs desktop/laptop
+      const isMobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "") ||
+        (window.matchMedia && window.matchMedia("(pointer: coarse) and (hover: none)").matches);
+
       const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
       let measuredMbps = (conn && conn.downlink) ? conn.downlink : 0;
-      let measuredRtt = (conn && conn.rtt) ? conn.rtt : 18;
-      let netType = (conn && conn.effectiveType) ? conn.effectiveType.toUpperCase() : "WIFI/4G";
+      let measuredRtt = (conn && conn.rtt) ? conn.rtt : 0;
+      let rttSamples = [];
+      let ispHint = ""; // "wifi" | "4g" | ""
+      let probeSettled = !isMobileUA || !!(conn && conn.type);
+      let detectedMode = "wifi";
+
+      setTimeout(() => {
+        if (!probeSettled) {
+          probeSettled = true;
+          updateNetTelemetry();
+        }
+      }, 280);
+
+      // 1a. Fast non-blocking ASN / Carrier check (distinguishes Mobile 4G carriers vs Fixed FTTH Wi-Fi even on iOS Safari)
+      fetch("https://api.ipapi.is/", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((info) => {
+          if (!info) return;
+          const asn = String(info.asn || "").toUpperCase();
+          const comp = String(info.company || "").toUpperCase();
+          const ip = String(info.ip || "");
+
+          // Pure Mobile 4G/5G Carriers & Vietnam Cellular CGNAT IPv4 Pools
+          if (
+            /MOBIFONE|VIETNAMOBILE|GMOBILE|WINTEL|VINAPHONE|AS131429|AS38731|AS135905|AS131402|AS131384/.test(asn + " " + comp) ||
+            /^27\.(6[4-9]|7[0-9])\./.test(ip) ||
+            /^171\.(22[4-9]|2[3-5][0-9])\./.test(ip) ||
+            /^113\.185\./.test(ip) ||
+            /^14\.25[0-5]\./.test(ip)
+          ) {
+            ispHint = "4g";
+            probeSettled = true;
+          } else if (/FPT|SCTV|CMC|NETNAM|AS18403|AS45543|AS24086/.test(asn + " " + comp)) {
+            // Fixed Broadband FTTH ISPs (no cellular network)
+            ispHint = "wifi";
+            probeSettled = true;
+          }
+          updateNetTelemetry();
+        })
+        .catch(() => {});
+
+      // 1b. Warm HTTP/2 ping to Cloudflare local edge (1.1.1.1) for true air-interface RTT (Wi-Fi ~15-55ms vs 4G ~65-160ms)
+      (async function probeEdgeRtt() {
+        try {
+          await fetch("https://1.1.1.1/cdn-cgi/trace", { cache: "no-store" });
+          for (let i = 0; i < 2; i++) {
+            if (finished) return;
+            const t0 = performance.now();
+            await fetch("https://1.1.1.1/cdn-cgi/trace?p=" + i + "_" + Date.now(), { cache: "no-store" });
+            const rtt = Math.round(performance.now() - t0);
+            if (rtt > 1 && rtt < 1500) {
+              rttSamples.push(rtt);
+              measuredRtt = Math.min(...rttSamples);
+              probeSettled = true;
+              updateNetTelemetry();
+            }
+          }
+        } catch (e) {}
+      })();
+
+      // Multi-layer Wi-Fi vs 4G/5G Classifier
+      function classifyConnection() {
+        const hwType = (conn && conn.type) ? String(conn.type).toLowerCase() : "";
+        const effType = (conn && conn.effectiveType) ? String(conn.effectiveType).toLowerCase() : "";
+        const saveData = !!(conn && conn.saveData);
+
+        // 1. Direct OS radio interface when exposed (Android Chrome / Samsung / WebView)
+        if (hwType === "wifi" || hwType === "ethernet") {
+          return "wifi";
+        }
+        if (hwType === "cellular" || hwType === "wimax") {
+          if (effType === "2g" || effType === "slow-2g" || effType === "3g") return "3g";
+          if (measuredMbps >= 55 && measuredRtt > 0 && measuredRtt <= 35) return "5g";
+          return "4g";
+        }
+
+        // 2. Explicit slow cellular tier
+        if (effType === "2g" || effType === "slow-2g" || effType === "3g") {
+          return "3g";
+        }
+
+        // 3. Carrier / ASN hint (catches MobiFone/Viettel/Vina 4G hotspots & iOS 4G, or FPT/SCTV Wi-Fi)
+        if (ispHint === "4g" && isMobileUA) {
+          return (measuredMbps >= 55 && measuredRtt > 0 && measuredRtt <= 35) ? "5g" : "4g";
+        }
+        if (ispHint === "wifi") {
+          return "wifi";
+        }
+
+        // 4. Desktop / Laptop browsers (Windows/macOS Chrome sets effectiveType='4g' even on 500Mbps Wi-Fi!)
+        if (!isMobileUA) {
+          if (ispHint === "4g" && saveData) return "4g";
+          return "wifi";
+        }
+
+        // 5. Mobile browsers without conn.type (e.g., iOS Safari on shared VNPT/Viettel ASN):
+        // Use warm Cloudflare edge RTT + Data Saver + throughput
+        if (saveData) return "4g";
+        if (rttSamples.length > 0) {
+          if (measuredRtt <= 58) return "wifi";
+          return (measuredMbps >= 55 && measuredRtt <= 38) ? "5g" : "4g";
+        }
+        return measuredMbps >= 25 ? "wifi" : "4g";
+      }
+
+      function renderConnectionPill(mode) {
+        detectedMode = mode;
+        if (!probeSettled) {
+          connPillEl.className = "loader-conn-pill is-wifi";
+          connIconEl.className = "fa-solid fa-wifi";
+          connLabelEl.textContent = "Đang nhận diện Wi-Fi / 4G...";
+          return;
+        }
+        if (mode === "wifi") {
+          connPillEl.className = "loader-conn-pill is-wifi";
+          connIconEl.className = "fa-solid fa-wifi";
+          connLabelEl.textContent = "Đang dùng: Wi-Fi";
+        } else if (mode === "5g") {
+          connPillEl.className = "loader-conn-pill is-cellular";
+          connIconEl.className = "fa-solid fa-signal";
+          connLabelEl.textContent = "Đang dùng: Mạng 5G";
+        } else if (mode === "3g") {
+          connPillEl.className = "loader-conn-pill is-cellular";
+          connIconEl.className = "fa-solid fa-signal";
+          connLabelEl.textContent = "Đang dùng: Mạng 3G";
+        } else {
+          connPillEl.className = "loader-conn-pill is-cellular";
+          connIconEl.className = "fa-solid fa-signal";
+          connLabelEl.textContent = "Đang dùng: Mạng 4G";
+        }
+      }
 
       function updateNetTelemetry() {
         try {
@@ -2152,16 +2333,24 @@
           if (totalBytes > 8000 && totalDurationMs > 5) {
             const realMbps = ((totalBytes * 8) / (totalDurationMs / 1000)) / 1e6;
             if (realMbps > 0.2) {
-              measuredMbps = Math.min(350, Math.max(realMbps, measuredMbps));
+              measuredMbps = Math.min(350, Math.max(realMbps, (conn && conn.downlink) ? conn.downlink : 0));
             }
           } else if (!measuredMbps) {
-            const elapsedSec = Math.max(0.05, (performance.now() - startTime) / 1000);
-            measuredMbps = Math.min(120, Math.max(2.5, 18 / elapsedSec));
+            const elapsedSec = Math.max(0.06, (performance.now() - startTime) / 1000);
+            measuredMbps = Math.min(95, Math.max(3.5, 16 / elapsedSec));
           }
         } catch (err) {}
 
-        const mbpsDisplay = measuredMbps > 0 ? measuredMbps.toFixed(1) : "25.0";
-        netTextEl.textContent = `Mạng ${netType}: ${mbpsDisplay} Mbps • ${measuredRtt}ms`;
+        const mode = classifyConnection();
+        renderConnectionPill(mode);
+
+        const mbpsDisplay = measuredMbps > 0 ? measuredMbps.toFixed(1) : "24.0";
+        const rttDisplay = measuredRtt > 0 ? measuredRtt : (mode === "wifi" ? 14 : 46);
+        netTextEl.textContent = `${mbpsDisplay} Mbps • ${rttDisplay}ms`;
+      }
+
+      if (conn && typeof conn.addEventListener === "function") {
+        conn.addEventListener("change", updateNetTelemetry);
       }
       updateNetTelemetry();
 
@@ -2171,14 +2360,17 @@
         barEl.style.width = p + "%";
         ringEl.style.strokeDashoffset = (CIRC - (CIRC * p) / 100).toFixed(2);
 
+        const netName = detectedMode === "wifi" ? "Wi-Fi" : detectedMode.toUpperCase();
         if (p < 30) {
-          statusEl.textContent = "Đang kết nối máy chủ & đồng bộ tốc độ mạng...";
+          statusEl.textContent = `Đã nhận diện kết nối ${netName} • Đang đồng bộ máy chủ...`;
         } else if (p < 65) {
-          statusEl.textContent = "Đang nạp giao diện VIP & danh sách SoundCloud Likes...";
+          statusEl.textContent = `Đang tải giao diện & 640 bài nhạc qua ${netName}...`;
         } else if (p < 95) {
-          statusEl.textContent = "Đang tải khung Avatar & chuẩn bị Video nền...";
+          statusEl.textContent = detectedMode === "wifi"
+            ? "Đang nạp khung Avatar & Video nền chất lượng cao..."
+            : `Đang tối ưu luồng Video nền cho mạng ${netName}...`;
         } else if (p < 100) {
-          statusEl.textContent = "Đang hoàn tất đồng bộ dữ liệu...";
+          statusEl.textContent = "Đang hoàn tất dữ liệu...";
         } else {
           statusEl.textContent = "Hoàn tất 100% • Chào mừng bạn!";
         }
@@ -2248,12 +2440,13 @@
         if (finished) return;
         checkCriticalAssets();
 
-        // Speed factor scales directly with measured Mbps (fast net = fast climb, slow net = gradual climb)
-        const netSpeedFactor = Math.max(0.45, Math.min(3.4, (measuredMbps || 18) / 14));
+        // Speed factor scales directly with measured Mbps & Wi-Fi vs 4G mode
+        const modeMul = detectedMode === "wifi" ? 1.05 : (detectedMode === "3g" ? 0.65 : 0.85);
+        const netSpeedFactor = Math.max(0.42, Math.min(2.4, ((measuredMbps || 18) / 15) * modeMul));
 
         if (currentPct < targetPct) {
           const diff = targetPct - currentPct;
-          const step = Math.max(0.55 * netSpeedFactor, diff * 0.14 * Math.min(1.8, netSpeedFactor));
+          const step = Math.max(0.5 * netSpeedFactor, diff * 0.11 * Math.min(1.6, netSpeedFactor));
           currentPct = Math.min(targetPct, currentPct + step);
         } else if (!assetsDone && currentPct < 92) {
           // Trickle slowly while waiting for network response on slow connections
@@ -2270,7 +2463,7 @@
             setTimeout(() => {
               if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
             }, 400);
-          }, 180);
+          }, 260);
           return;
         }
         requestAnimationFrame(tickLoader);
